@@ -5,15 +5,13 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
-#define STB_DS_IMPLEMENTATION
 #include <stb_ds.h>
 
 void testJsonParseArray(char *input, char *elements[], int n)
 {
     JSON *result = NULL;
-    int inputLen = strlen(input), consumed = 0;
-
-    parseArray(input, 0, inputLen - 1, &consumed, &result);
+    int inputLen = strlen(input), i = 0;
+    parseArray(input, &i, inputLen - 1, &result);
 }
 
 void test_json_parseArray_1()

@@ -8,15 +8,15 @@
 
 void testJsonParseBool(char *input, double expected)
 {
-    int consumed;
-    JSON* result;
-    parseBool(input, 0, strlen(input) - 1, &consumed, &result);
+    int i = 0;
+    JSON *result;
+    parseBool(input, &i, strlen(input) - 1, &result);
 
     int expectedConsumend = strlen(input);
 
-    TEST_ASSERT_EQUAL_INT32(J_LIST, result->type);
+    TEST_ASSERT_EQUAL_INT32(J_BOOL, result->type);
     TEST_ASSERT_EQUAL_INT8(expected, result->value.boolean);
-    TEST_ASSERT_EQUAL_INT32(expectedConsumend, consumed);
+    TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
 }
 
 void test_json_parseBool_1()

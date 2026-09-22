@@ -1,3 +1,6 @@
+#ifndef JSONIFY_JSON_H
+#define JSONIFY_JSON_H
+
 #include <stdbool.h>
 #include "string_builder.h"
 
@@ -33,14 +36,16 @@ typedef struct JSON
     union JSON_VALUE value;
 } JSON;
 
-void parseString(char *s, int i, int j, int *consumed, JSON **result);
+void parseString(char *s, int *i, int j, JSON **result);
 
-void parseNumber(char *s, int i, int j, int *consumed, JSON **result);
+void parseNumber(char *s, int *i, int j, JSON **result);
 
-void parseBool(char *s, int i, int j, int *consumed, JSON **result);
+void parseBool(char *s, int *i, int j, JSON **result);
 
-void parseObject(char *s, int i, int j, int *consumed, JSON **result);
+void parseObject(char *s, int *i, int j, JSON **result);
 
-void parseArray(char *s, int i, int j, int *consumed, JSON **result);
+void parseArray(char *s, int *i, int j, JSON **result);
 
-void parseValue(char *s, int i, int j, int *consumed, JSON **result);
+void parseValue(char *s, int *i, int j, JSON **result);
+
+#endif // JSONIFY_JSON_H

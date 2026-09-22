@@ -1,3 +1,5 @@
+#ifndef JSONIFY_STRING_BUILDER_H
+#define JSONIFY_STRING_BUILDER_H
 
 extern const int INITIAL_STRING_BUILDER_BUFFER_SIZE;
 
@@ -19,3 +21,5 @@ StringBuilder stringBuilder_new();
 void stringBuilder_append(StringBuilder *builder, char *str, int n);
 
 String stringBuilder_build(StringBuilder *builder);
+
+#endif // JSONIFY_STRING_BUILDER_H
