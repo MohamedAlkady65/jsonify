@@ -7,7 +7,8 @@ typedef enum JSON_VALUE_TYPE
     J_NUMBER,
     J_BOOL,
     J_LIST,
-    J_OBJECT
+    J_OBJECT,
+    J_NULL,
 } JSON_VALUE_TYPE;
 
 typedef struct JSON_OBJECT
@@ -32,14 +33,14 @@ typedef struct JSON
     union JSON_VALUE value;
 } JSON;
 
-void parseString(char *text, int start, int end, int *consumed, String *result);
+void parseString(char *s, int i, int j, int *consumed, JSON **result);
 
-void parseNumber(char *text, int start, int end, int *consumed, double *result);
+void parseNumber(char *s, int i, int j, int *consumed, JSON **result);
 
-void parseBool(char *text, int start, int end, int *consumed, bool *result);
+void parseBool(char *s, int i, int j, int *consumed, JSON **result);
 
-void parseObject(char *s, int i, int j, int *consumed, JSON_OBJECT **result);
+void parseObject(char *s, int i, int j, int *consumed, JSON **result);
 
 void parseArray(char *s, int i, int j, int *consumed, JSON **result);
 
-JSON *parse(char *text);
+void parseValue(char *s, int i, int j, int *consumed, JSON **result);

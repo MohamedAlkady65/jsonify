@@ -9,12 +9,13 @@
 void testJsonParseNumber(char *input, double expected, int expectedConsumed)
 {
     int consumed;
-    double result;
+    JSON *result;
     parseNumber(input, 0, strlen(input) - 1, &consumed, &result);
 
     int expectedConsumend = expectedConsumed == -1 ? strlen(input) : expectedConsumed;
 
-    TEST_ASSERT_EQUAL_DOUBLE(expected, result);
+    TEST_ASSERT_EQUAL_INT32(J_NUMBER, result->type);
+    TEST_ASSERT_EQUAL_DOUBLE(expected, result->value.number);
     TEST_ASSERT_EQUAL_INT32(expectedConsumend, consumed);
 }
 

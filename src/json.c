@@ -1,66 +1,22 @@
 #include <stdbool.h>
-#define STB_DS_IMPLEMENTATION // in exactly ONE .c file
+#define STB_DS_IMPLEMENTATION
 #include <stb_ds.h>
 #include <assert.h>
 #include "string_builder.h"
 #include "json.h"
+#include "utils.c"
 
-void parseString(char *s, int i, int j, int *consumed, String *result)
+void parseString(char *s, int i, int j, int *consumed, JSON **result)
 {
-    StringBuilder builder = stringBuilder_new();
+    String str;
+    parseStringHelper(s, i, j, consumed, &str);
 
-    int start = i;
-
-    assert(s[i] == '"');
-
-    bool escaping = false;
-
-    i++;
-
-    for (; i <= j; i++)
-    {
-        if (!escaping && s[i] == '"')
-        {
-            String builded = stringBuilder_build(&builder);
-            *result = builded;
-
-            *consumed = i - start + 1;
-            return;
-        }
-
-        if (!escaping && s[i] == '\\')
-        {
-            escaping = true;
-            continue;
-        }
-
-        if (escaping)
-        {
-
-            if (s[i] == '"' || s[i] == '\\')
-            {
-                stringBuilder_append(&builder, s + i, 1);
-            }
-            else if (s[i] == 'n')
-            {
-                char newLine = '\n';
-                stringBuilder_append(&builder, (&newLine), 1);
-            }
-            else
-            {
-                assert(false);
-            }
-
-            escaping = false;
-            continue;
-        }
-
-        stringBuilder_append(&builder, s + i, 1);
-    }
-    assert(false);
+    result = malloc(sizeof(JSON));
+    (*result)->type = J_STRING;
+    (*result)->value.string = str;
 }
 
-void parseNumber(char *s, int i, int j, int *consumed, double *result)
+void parseNumber(char *s, int i, int j, int *consumed, JSON **result)
 {
 
     double res = 0;
@@ -125,11 +81,14 @@ void parseNumber(char *s, int i, int j, int *consumed, double *result)
         res *= -1;
     }
 
-    *result = res;
     *consumed = i - start;
+
+    *result = malloc(sizeof(JSON));
+    (*result)->type = J_NUMBER;
+    (*result)->value.number = res;
 }
 
-void parseBool(char *s, int i, int j, int *consumed, bool *result)
+void parseBool(char *s, int i, int j, int *consumed, JSON **result)
 {
     char *words[] = {"true", "false"};
     int wordsLen[] = {4, 5};
@@ -147,8 +106,10 @@ void parseBool(char *s, int i, int j, int *consumed, bool *result)
 
             if (i == wordsLen[w] - 1)
             {
-                *result = wordsValue[w];
                 *consumed = i - start + 1;
+                *result = malloc(sizeof(JSON));
+                (*result)->type = J_BOOL;
+                (*result)->value.boolean = wordsValue[w];
                 return;
             }
         }
@@ -157,50 +118,7 @@ void parseBool(char *s, int i, int j, int *consumed, bool *result)
     assert(false);
 }
 
-int skipWs(char *s, int i, int j)
-{
-    while (i <= j && (s[i] == ' ' || s[i] == '\n'))
-    {
-        i++;
-    }
-    if (i > j)
-    {
-        assert(false);
-    }
-    return i;
-}
-
-void processPair(char *s, int i, int j, int *totalConsumed, JSON_OBJECT **object)
-{
-    char *data;
-    int consumed, keyLen;
-    int start = i;
-
-    String key;
-    parseString(s, i, j, &consumed, &key);
-    i += consumed;
-
-    i = skipWs(s, i, j);
-
-    assert(s[i] == ':');
-    i++;
-
-    i = skipWs(s, i, j);
-
-    String value;
-    parseString(s, i, j, &consumed, &value);
-    i += consumed;
-
-    JSON *valueObj = malloc(sizeof(JSON));
-    valueObj->type = J_STRING;
-    valueObj->value.string = value;
-
-    shputs(*object, ((JSON_OBJECT){.key = key.data, .keyLen = key.len, .value = valueObj}));
-
-    *totalConsumed = i - start;
-}
-
-void parseObject(char *s, int i, int j, int *consumed, JSON_OBJECT **result)
+void parseObject(char *s, int i, int j, int *consumed, JSON **result)
 {
 
     JSON_OBJECT *res = NULL;
@@ -209,11 +127,10 @@ void parseObject(char *s, int i, int j, int *consumed, JSON_OBJECT **result)
     i++;
     while (i <= j)
     {
-        i = skipWs(s, i, j);
         int consumed;
         processPair(s, i, j, &consumed, &res);
         i += consumed;
-        i = skipWs(s, i, j);
+        skipWs(s, &i, j);
         if (s[i] != ',')
             break;
         i++;
@@ -225,27 +142,11 @@ void parseObject(char *s, int i, int j, int *consumed, JSON_OBJECT **result)
     }
 
     i++;
-    *result = res;
     consumed += j - i + 1;
-}
 
-void processArrayElement(char *s, int i, int j, int *totalConsumed, JSON **list)
-{
-    char *data;
-    int consumed, keyLen;
-    int start = i;
-
-    String value;
-    parseString(s, i, j, &consumed, &value);
-    i += consumed;
-
-    JSON *valueObj = malloc(sizeof(JSON));
-    valueObj->type = J_STRING;
-    valueObj->value.string = value;
-
-    arrput(*list, *valueObj);
-
-    *totalConsumed = i - start;
+    result = malloc(sizeof(JSON));
+    (*result)->type = J_OBJECT;
+    (*result)->value.object = res;
 }
 
 void parseArray(char *s, int i, int j, int *consumed, JSON **result)
@@ -256,11 +157,10 @@ void parseArray(char *s, int i, int j, int *consumed, JSON **result)
     i++;
     while (i <= j)
     {
-        i = skipWs(s, i, j);
         int consumed;
         processArrayElement(s, i, j, &consumed, &res);
         i += consumed;
-        i = skipWs(s, i, j);
+        skipWs(s, &i, j);
         if (s[i] != ',')
             break;
         i++;
@@ -272,10 +172,39 @@ void parseArray(char *s, int i, int j, int *consumed, JSON **result)
     }
 
     i++;
-    *result = res;
     consumed += j - i + 1;
+
+    result = malloc(sizeof(JSON));
+    (*result)->type = J_OBJECT;
+    (*result)->value.list = &res;
 }
 
-JSON *parse(char *text)
+void parseValue(char *s, int i, int j, int *consumed, JSON **result)
 {
+
+    skipWs(s, &i, j);
+
+    JSON_VALUE_TYPE type = valueType(s[i]);
+
+    switch (type)
+    {
+    case J_LIST:
+        parseArray(s, i, j, consumed, result);
+        break;
+    case J_OBJECT:
+        parseObject(s, i, j, consumed, result);
+        break;
+    case J_STRING:
+        parseString(s, i, j, consumed, result);
+        break;
+    case J_NUMBER:
+        parseNumber(s, i, j, consumed, result);
+        break;
+    case J_BOOL:
+        parseBool(s, i, j, consumed, result);
+        break;
+    default:
+        assert(false);
+        break;
+    }
 }

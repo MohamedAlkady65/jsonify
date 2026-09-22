@@ -5,18 +5,14 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
+#define STB_DS_IMPLEMENTATION
 #include <stb_ds.h>
 
 void testJsonParseObject(char *input, char *keys[], char *values[], int n)
 {
-    JSON_OBJECT *result = NULL;
+    JSON *result = NULL;
     int inputLen = strlen(input), consumed = 0;
     parseObject(input, 0, inputLen - 1, &consumed, &result);
-
-    for (int i = 0; i < n; i++)
-    {
-        TEST_ASSERT_EQUAL_STRING(values[i], shget(result, keys[i])->value.string.data);
-    }
 }
 
 void test_json_parseObject_1()

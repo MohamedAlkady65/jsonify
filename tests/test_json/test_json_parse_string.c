@@ -9,17 +9,18 @@
 void testJsonParseString(char *input, char *expected)
 {
     int consumed;
-    String result;
+    JSON *result;
 
     parseString(input, 0, strlen(input) - 1, &consumed, &result);
 
     int expectedLen = strlen(expected);
     int expectedConsumend = strlen(input);
 
-    TEST_ASSERT_EQUAL_INT32(expectedLen, result.len);
+    TEST_ASSERT_EQUAL_INT32(J_STRING, result->type);
+    TEST_ASSERT_EQUAL_INT32(expectedLen, result->value.string.len);
     TEST_ASSERT_EQUAL_INT32(expectedConsumend, consumed);
-    TEST_ASSERT_EQUAL_INT32(strlen(expected), strlen(result.data));
-    TEST_ASSERT_EQUAL_STRING(expected, result.data);
+    TEST_ASSERT_EQUAL_INT32(strlen(expected), strlen(result->value.string.data));
+    TEST_ASSERT_EQUAL_STRING(expected, result->value.string.data);
 }
 
 void test_json_parseString_1()
