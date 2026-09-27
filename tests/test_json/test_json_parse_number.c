@@ -1,17 +1,17 @@
 #include "../utils/utils.h"
 #include "unity.h"
-#include <json.h>
+#include <parser.h>
 #include <string.h>
 
 void testJsonParseNumber(char *input, double expected, int expectedConsumed) {
-  int i = 0;
-  Json *result;
-  parseValue(input, &i, strlen(input) - 1, &result);
+  Json *result = NULL;
+  JsonParser *parser = jsonParser_create(input, strlen(input));
+  jsonParser_parseValue(parser, &result);
 
   int expectedConsumend =
       expectedConsumed == -1 ? strlen(input) : expectedConsumed;
 
-  TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
+  TEST_ASSERT_EQUAL_INT32(expectedConsumend, parser->cursor + 1);
 
   Json exp = {J_NUMBER, {.number = expected}};
   testValue(&exp, result);

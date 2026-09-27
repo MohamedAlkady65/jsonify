@@ -1,6 +1,6 @@
 #include "../utils/utils.h"
 #include <assert.h>
-#include <json.h>
+#include <parser.h>
 #include <stb_ds.h>
 #include <stdbool.h>
 #include <string.h>
@@ -8,8 +8,8 @@
 
 void testJsonParseArray(char *input, Json elements[], int n) {
   Json *result = NULL;
-  int inputLen = strlen(input), i = 0;
-  parseValue(input, &i, inputLen - 1, &result);
+  JsonParser *parser = jsonParser_create(input, strlen(input));
+  jsonParser_parseValue(parser, &result);
 
   JsonList list = {n, elements};
   Json expected = {J_LIST, {.list = &list}};

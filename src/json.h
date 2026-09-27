@@ -42,6 +42,5 @@ typedef struct Json {
   union JsonValue value;
 } Json;
 
-void parseValue(char *s, int *i, int j, Json **result);
 
 #endif // JSONIFY_JSON_H
