@@ -6,7 +6,6 @@
 typedef struct JsonParser {
   char *data;
   int n;
-  int j;
   int cursor;
 } JsonParser;
 

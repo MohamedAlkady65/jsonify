@@ -8,18 +8,17 @@ JsonParser *jsonParser_create(char *data, int n) {
   JsonParser *parser = malloc(sizeof(JsonParser));
   parser->data = data;
   parser->n = n;
-  parser->j = n - 1;
   parser->cursor = 0;
   return parser;
 }
 
 void jsonParser_skipWs(JsonParser *parser) {
-  while (parser->cursor <= parser->j &&
+  while (parser->cursor < parser->n &&
          (parser->data[parser->cursor] == ' ' ||
           parser->data[parser->cursor] == '\n')) {
     parser->cursor++;
   }
-  if (parser->cursor > parser->j) {
+  if (parser->cursor >= parser->n) {
     assert(false);
   }
 }
@@ -33,7 +32,7 @@ void jsonParser_parseStringHelper(JsonParser *parser, String *result) {
 
   (parser->cursor)++;
 
-  for (; parser->cursor <= parser->j; (parser->cursor)++) {
+  for (; parser->cursor < parser->n; (parser->cursor)++) {
     if (!escaping && parser->data[parser->cursor] == '"') {
       String builded = stringBuilder_build(&builder);
       *result = builded;
@@ -88,11 +87,11 @@ void jsonParser_parseNumber(JsonParser *parser, Json **result) {
     parser->cursor++;
   }
 
-  if (parser->cursor > parser->j) {
+  if (parser->cursor >= parser->n) {
     assert(false);
   }
 
-  for (; parser->cursor <= parser->j; parser->cursor++) {
+  for (; parser->cursor < parser->n; parser->cursor++) {
 
     if (parser->data[parser->cursor] == '.') {
       if (hasFraction) {
@@ -141,7 +140,7 @@ void jsonParser_parseBool(JsonParser *parser, Json **result) {
   bool wordsValue[] = {true, false};
 
   for (int w = 0; w < 2; w++) {
-    for (; parser->cursor <= parser->j && parser->cursor < wordsLen[w];
+    for (; parser->cursor < parser->n && parser->cursor < wordsLen[w];
          parser->cursor++) {
       if (parser->data[parser->cursor] != words[w][parser->cursor]) {
         break;
@@ -188,7 +187,7 @@ void jsonParser_parseObject(JsonParser *parser, Json **result) {
 
   assert(parser->data[parser->cursor] == '{');
   parser->cursor++;
-  while (parser->cursor <= parser->j) {
+  while (parser->cursor < parser->n) {
     jsonParser_skipWs(parser);
     if (parser->data[parser->cursor] == '}')
       break;
@@ -198,7 +197,7 @@ void jsonParser_parseObject(JsonParser *parser, Json **result) {
     parser->cursor++;
   }
 
-  if (parser->cursor > parser->j || parser->data[parser->cursor] != '}') {
+  if (parser->cursor >= parser->n || parser->data[parser->cursor] != '}') {
     assert(false);
   }
 
@@ -227,7 +226,7 @@ void jsonParser_parseArray(JsonParser *parser, Json **result) {
 
   assert(parser->data[parser->cursor] == '[');
   parser->cursor++;
-  while (parser->cursor <= parser->j) {
+  while (parser->cursor < parser->n) {
     jsonParser_skipWs(parser);
     if (parser->data[parser->cursor] == ']')
       break;
@@ -237,7 +236,7 @@ void jsonParser_parseArray(JsonParser *parser, Json **result) {
     parser->cursor++;
   }
 
-  if (parser->cursor > parser->j || parser->data[parser->cursor] != ']') {
+  if (parser->cursor >= parser->n || parser->data[parser->cursor] != ']') {
     assert(false);
   }
 
