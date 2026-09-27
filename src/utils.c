@@ -99,12 +99,9 @@ void parseStringHelper(char *s, int *i, int j, String *result)
 
 void processArrayElement(char *s, int *i, int j, JSON **list)
 {
-    char *data;
-    int keyLen;
-
     JSON *value;
     parseValue(s, i, j, &value);
-    
+
     (*i)++;
     skipWs(s, i, j);
 
@@ -113,9 +110,6 @@ void processArrayElement(char *s, int *i, int j, JSON **list)
 
 void processPair(char *s, int *i, int j, JSON_OBJECT **object)
 {
-    char *data;
-    int keyLen;
-
     skipWs(s, i, j);
 
     String key;

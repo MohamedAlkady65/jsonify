@@ -1,0 +1,4 @@
+-Ilib
+-Isrc
+-Ilib/unity/src
+-DUNITY_INCLUDE_DOUBLE
