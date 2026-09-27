@@ -7,20 +7,22 @@
 #include <assert.h>
 #include <stb_ds.h>
 
-void testJsonParseObject(char *input, char *keys[], JSON values[], int n)
+void testJsonParseObject(char *input, char *keys[], JSON* values, int n)
 {
     JSON *result = NULL;
     int inputLen = strlen(input), i = 0;
     parseObject(input, &i, inputLen - 1, &result);
 
     TEST_ASSERT_EQUAL_INT32(J_OBJECT, result->type);
-
+    
     JSON_OBJECT *object = result->value.object;
+
+    TEST_ASSERT_EQUAL_INT32(n, result->value.object->length);
 
     for (int i = 0; i < n; i++)
     {
 
-        JSON *actual = shget(object, keys[i]);
+        JSON *actual = shget(object->elements, keys[i]);
         JSON expected = values[i];
 
         TEST_ASSERT_EQUAL_INT32(expected.type, actual->type);
@@ -77,11 +79,9 @@ void test_json_parseObject_4()
 
 void test_json_parseObject_5()
 {
-    TEST_IGNORE();
-
     char *input = "{}";
-    char *keys[] = {};
-    JSON values[] = {};
+    char **keys ={};
+    JSON *values = {};
     testJsonParseObject(input, keys, values, 0);
 }
 
