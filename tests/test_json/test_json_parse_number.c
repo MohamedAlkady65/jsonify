@@ -5,7 +5,7 @@
 
 void testJsonParseNumber(char *input, double expected, int expectedConsumed) {
   int i = 0;
-  JSON *result;
+  Json *result;
   parseValue(input, &i, strlen(input) - 1, &result);
 
   int expectedConsumend =
@@ -13,7 +13,7 @@ void testJsonParseNumber(char *input, double expected, int expectedConsumed) {
 
   TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
 
-  JSON exp = {J_NUMBER, {.number = expected}};
+  Json exp = {J_NUMBER, {.number = expected}};
   testValue(&exp, result);
 }
 

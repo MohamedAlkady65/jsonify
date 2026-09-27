@@ -1,48 +1,47 @@
-#ifndef JSONIFY_JSON_H
-#define JSONIFY_JSON_H
+#ifndef JsonIFY_Json_H
+#define JsonIFY_Json_H
 
 #include "string_builder.h"
 #include <stdbool.h>
 
-typedef enum JSON_VALUE_TYPE {
+typedef enum JsonValueType {
   J_STRING,
   J_NUMBER,
   J_BOOL,
   J_LIST,
   J_OBJECT,
   J_NULL,
-} JSON_VALUE_TYPE;
+} JsonValueType;
 
-typedef struct JSON_OBJECT_PAIR {
+typedef struct JsonObjectPair {
   char *key;
   int keyLen;
-  struct JSON *value;
-} JSON_OBJECT_PAIR;
+  struct Json *value;
+} JsonObjectPair;
 
-typedef struct JSON_OBJECT {
+typedef struct JsonObject {
   int length;
-  struct JSON_OBJECT_PAIR *elements;
-} JSON_OBJECT;
+  struct JsonObjectPair *elements;
+} JsonObject;
 
-typedef struct JSON_LIST {
+typedef struct JsonList {
   int length;
-  struct JSON *elements;
-} JSON_LIST;
+  struct Json *elements;
+} JsonList;
 
-typedef union JSON_VALUE {
+typedef union JsonValue {
   String string;
   double number;
   bool boolean;
-  JSON_LIST *list;
-  JSON_OBJECT *object;
-} JSON_VALUE;
+  JsonList *list;
+  JsonObject *object;
+} JsonValue;
 
-typedef struct JSON {
-  enum JSON_VALUE_TYPE type;
-  union JSON_VALUE value;
-} JSON;
+typedef struct Json {
+  enum JsonValueType type;
+  union JsonValue value;
+} Json;
 
+void parseValue(char *s, int *i, int j, Json **result);
 
-void parseValue(char *s, int *i, int j, JSON **result);
-
-#endif // JSONIFY_JSON_H
+#endif // JsonIFY_Json_H

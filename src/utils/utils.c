@@ -13,7 +13,7 @@ void skipWs(char *s, int *i, int j) {
   }
 }
 
-JSON_VALUE_TYPE valueType(char ch) {
+JsonValueType valueType(char ch) {
   if (ch == '"') {
     return J_STRING;
   } else if (ch == '{') {
@@ -72,8 +72,8 @@ void parseStringHelper(char *s, int *i, int j, String *result) {
   assert(false);
 }
 
-void processArrayElement(char *s, int *i, int j, JSON_LIST **list) {
-  JSON *value;
+void processArrayElement(char *s, int *i, int j, JsonList **list) {
+  Json *value;
   parseValue(s, i, j, &value);
 
   (*i)++;
@@ -83,7 +83,7 @@ void processArrayElement(char *s, int *i, int j, JSON_LIST **list) {
   (*list)->length++;
 }
 
-void processPair(char *s, int *i, int j, JSON_OBJECT **object) {
+void processPair(char *s, int *i, int j, JsonObject **object) {
   String key;
   parseStringHelper(s, i, j, &key);
   (*i)++;
@@ -93,13 +93,13 @@ void processPair(char *s, int *i, int j, JSON_OBJECT **object) {
   assert(s[*i] == ':');
   (*i)++;
 
-  JSON *value;
+  Json *value;
   parseValue(s, i, j, &value);
   (*i)++;
 
   skipWs(s, i, j);
   shputs(
       (*object)->elements,
-      ((JSON_OBJECT_PAIR){.key = key.data, .keyLen = key.len, .value = value}));
+      ((JsonObjectPair){.key = key.data, .keyLen = key.len, .value = value}));
   (*object)->length++;
 }

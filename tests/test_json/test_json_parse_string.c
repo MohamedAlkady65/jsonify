@@ -7,14 +7,14 @@
 
 void testJsonParseString(char *input, char *expected) {
   int i = 0;
-  JSON *result;
+  Json *result;
 
   parseValue(input, &i, strlen(input) - 1, &result);
 
   int expectedConsumend = strlen(input);
   TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
-  
-  JSON exp = {J_STRING, {.string = {expected, strlen(expected)}}};
+
+  Json exp = {J_STRING, {.string = {expected, strlen(expected)}}};
   testValue(&exp, result);
 }
 

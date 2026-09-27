@@ -7,13 +7,13 @@
 
 void testJsonParseBool(char *input, bool expected) {
   int i = 0;
-  JSON *result;
+  Json *result;
   parseValue(input, &i, strlen(input) - 1, &result);
 
   int expectedConsumend = strlen(input);
   TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
 
-  JSON exp = {J_BOOL, {.boolean=expected}};
+  Json exp = {J_BOOL, {.boolean = expected}};
   testValue(&exp, result);
 }
 

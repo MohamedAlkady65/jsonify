@@ -1,22 +1,22 @@
-#include <stdbool.h>
-#include <stdlib.h>
 #include "json.h"
 #include "string_builder.h"
 #include "utils/utils.c"
 #include <assert.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #define STB_DS_IMPLEMENTATION
 #include <stb_ds.h>
 
-void parseString(char *s, int *i, int j, JSON **result) {
+void parseString(char *s, int *i, int j, Json **result) {
   String str;
   parseStringHelper(s, i, j, &str);
 
-  *result = malloc(sizeof(JSON));
+  *result = malloc(sizeof(Json));
   (*result)->type = J_STRING;
   (*result)->value.string = str;
 }
 
-void parseNumber(char *s, int *i, int j, JSON **result) {
+void parseNumber(char *s, int *i, int j, Json **result) {
 
   double res = 0;
   bool negative = false;
@@ -67,13 +67,13 @@ void parseNumber(char *s, int *i, int j, JSON **result) {
     res *= -1;
   }
 
-  *result = malloc(sizeof(JSON));
+  *result = malloc(sizeof(Json));
   (*result)->type = J_NUMBER;
   (*result)->value.number = res;
   (*i)--;
 }
 
-void parseBool(char *s, int *i, int j, JSON **result) {
+void parseBool(char *s, int *i, int j, Json **result) {
   char *words[] = {"true", "false"};
   int wordsLen[] = {4, 5};
   bool wordsValue[] = {true, false};
@@ -85,7 +85,7 @@ void parseBool(char *s, int *i, int j, JSON **result) {
       }
 
       if (*i == wordsLen[w] - 1) {
-        *result = malloc(sizeof(JSON));
+        *result = malloc(sizeof(Json));
         (*result)->type = J_BOOL;
         (*result)->value.boolean = wordsValue[w];
         return;
@@ -96,9 +96,9 @@ void parseBool(char *s, int *i, int j, JSON **result) {
   assert(false);
 }
 
-void parseObject(char *s, int *i, int j, JSON **result) {
+void parseObject(char *s, int *i, int j, Json **result) {
 
-  JSON_OBJECT *res = malloc(sizeof(JSON_OBJECT));
+  JsonObject *res = malloc(sizeof(JsonObject));
   res->length = 0;
   res->elements = NULL;
 
@@ -120,13 +120,13 @@ void parseObject(char *s, int *i, int j, JSON **result) {
 
   (*i)++;
 
-  *result = malloc(sizeof(JSON));
+  *result = malloc(sizeof(Json));
   (*result)->type = J_OBJECT;
   (*result)->value.object = res;
 }
 
-void parseArray(char *s, int *i, int j, JSON **result) {
-  JSON_LIST *res = malloc(sizeof(JSON_LIST));
+void parseArray(char *s, int *i, int j, Json **result) {
+  JsonList *res = malloc(sizeof(JsonList));
   res->length = 0;
   res->elements = NULL;
 
@@ -148,16 +148,16 @@ void parseArray(char *s, int *i, int j, JSON **result) {
 
   (*i)++;
 
-  *result = malloc(sizeof(JSON));
+  *result = malloc(sizeof(Json));
   (*result)->type = J_LIST;
   (*result)->value.list = res;
 }
 
-void parseValue(char *s, int *i, int j, JSON **result) {
+void parseValue(char *s, int *i, int j, Json **result) {
 
   skipWs(s, i, j);
 
-  JSON_VALUE_TYPE type = valueType(s[*i]);
+  JsonValueType type = valueType(s[*i]);
 
   switch (type) {
   case J_LIST:

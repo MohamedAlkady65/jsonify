@@ -1,4 +1,4 @@
 #include <json.h>
 #include <unity.h>
 
-void testValue(JSON *expected, JSON *actual);
+void testValue(Json *expected, Json *actual);

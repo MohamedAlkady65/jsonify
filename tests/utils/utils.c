@@ -3,7 +3,7 @@
 #include <stb_ds.h>
 #include <unity.h>
 
-void testValue(JSON *expected, JSON *actual) {
+void testValue(Json *expected, Json *actual) {
   TEST_ASSERT_EQUAL_INT32(expected->type, actual->type);
   switch (expected->type) {
   case J_STRING:
