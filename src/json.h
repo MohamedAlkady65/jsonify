@@ -1,5 +1,5 @@
-#ifndef JsonIFY_Json_H
-#define JsonIFY_Json_H
+#ifndef JSONIFY_JSON_H
+#define JSONIFY_JSON_H
 
 #include "string_builder.h"
 #include <stdbool.h>
@@ -44,4 +44,4 @@ typedef struct Json {
 
 void parseValue(char *s, int *i, int j, Json **result);
 
-#endif // JsonIFY_Json_H
+#endif // JSONIFY_JSON_H
