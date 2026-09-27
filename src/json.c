@@ -1,10 +1,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#define STB_DS_IMPLEMENTATION
 #include "json.h"
 #include "string_builder.h"
-#include "utils.h"
+#include "utils/utils.c"
 #include <assert.h>
+#define STB_DS_IMPLEMENTATION
 #include <stb_ds.h>
 
 void parseString(char *s, int *i, int j, JSON **result) {
