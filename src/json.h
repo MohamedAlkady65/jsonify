@@ -42,15 +42,6 @@ typedef struct JSON {
   union JSON_VALUE value;
 } JSON;
 
-void parseString(char *s, int *i, int j, JSON **result);
-
-void parseNumber(char *s, int *i, int j, JSON **result);
-
-void parseBool(char *s, int *i, int j, JSON **result);
-
-void parseObject(char *s, int *i, int j, JSON **result);
-
-void parseArray(char *s, int *i, int j, JSON **result);
 
 void parseValue(char *s, int *i, int j, JSON **result);
 

@@ -1,45 +1,19 @@
+#include "../utils/utils.h"
 #include <assert.h>
 #include <json.h>
 #include <stb_ds.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unity.h>
 
 void testJsonParseArray(char *input, JSON elements[], int n) {
   JSON *result = NULL;
   int inputLen = strlen(input), i = 0;
-  parseArray(input, &i, inputLen - 1, &result);
+  parseValue(input, &i, inputLen - 1, &result);
 
-  TEST_ASSERT_EQUAL_INT32(J_LIST, result->type);
-
-  JSON_LIST *list = result->value.list;
-
-  TEST_ASSERT_EQUAL_INT32(n, result->value.list->length);
-
-  for (int i = 0; i < n; i++) {
-
-    JSON actual = list->elements[i];
-    JSON expected = elements[i];
-
-    TEST_ASSERT_EQUAL_INT32(expected.type, actual.type);
-
-    switch (expected.type) {
-    case J_STRING:
-      TEST_ASSERT_EQUAL_STRING(expected.value.string.data,
-                               actual.value.string.data);
-      break;
-    case J_NUMBER:
-      TEST_ASSERT_EQUAL_DOUBLE(expected.value.number, actual.value.number);
-      break;
-    case J_BOOL:
-      TEST_ASSERT_EQUAL_INT8(expected.value.boolean, actual.value.boolean);
-      break;
-    default:
-      assert(false);
-      break;
-    }
-  }
+  JSON_LIST list = {n, elements};
+  JSON expected = {J_LIST, {.list = &list}};
+  testValue(&expected, result);
 }
 
 void test_json_parseArray_1() {

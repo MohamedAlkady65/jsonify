@@ -10,7 +10,7 @@ CFLAGS =  -Ilib
 LIB_SRC = $(filter-out src/main.c,$(SRC))
 UNITY_SRC = $(wildcard lib/unity/src/*.c)
 
-TESTS_SRC     = tests/test_main.c $(LIB_SRC) $(UNITY_SRC)
+TESTS_SRC     = tests/test_main.c  $(wildcard  tests/utils/*.c)  $(LIB_SRC) $(UNITY_SRC)
 TESTS_TARGET  = $(BUILD_PATH)/test_runner
 TESTS_FLAGS =  -Ilib -Isrc -Ilib/unity/src -DUNITY_INCLUDE_DOUBLE
 

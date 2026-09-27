@@ -1,45 +1,27 @@
+#include "../utils/utils.h"
 #include <assert.h>
 #include <json.h>
 #include <stb_ds.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unity.h>
 
 void testJsonParseObject(char *input, char *keys[], JSON *values, int n) {
   JSON *result = NULL;
   int inputLen = strlen(input), i = 0;
-  parseObject(input, &i, inputLen - 1, &result);
+  parseValue(input, &i, inputLen - 1, &result);
 
-  TEST_ASSERT_EQUAL_INT32(J_OBJECT, result->type);
-
-  JSON_OBJECT *object = result->value.object;
-
-  TEST_ASSERT_EQUAL_INT32(n, result->value.object->length);
+  JSON_OBJECT object = {0, NULL};
+  JSON expected = {J_OBJECT, {.object = &object}};
 
   for (int i = 0; i < n; i++) {
-
-    JSON *actual = shget(object->elements, keys[i]);
-    JSON expected = values[i];
-
-    TEST_ASSERT_EQUAL_INT32(expected.type, actual->type);
-
-    switch (expected.type) {
-    case J_STRING:
-      TEST_ASSERT_EQUAL_STRING(expected.value.string.data,
-                               actual->value.string.data);
-      break;
-    case J_NUMBER:
-      TEST_ASSERT_EQUAL_DOUBLE(expected.value.number, actual->value.number);
-      break;
-    case J_BOOL:
-      TEST_ASSERT_EQUAL_INT8(expected.value.boolean, actual->value.boolean);
-      break;
-    default:
-      assert(false);
-      break;
-    }
+    shputs(object.elements, ((JSON_OBJECT_PAIR){.key = keys[i],
+                                                .keyLen = strlen(keys[i]),
+                                                .value = values + i}));
+    object.length++;
   }
+
+  testValue(&expected, result);
 }
 
 void test_json_parseObject_1() {

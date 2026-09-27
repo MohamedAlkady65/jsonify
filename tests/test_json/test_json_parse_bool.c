@@ -1,20 +1,20 @@
+#include "../utils/utils.h"
 #include <assert.h>
 #include <json.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unity.h>
 
-void testJsonParseBool(char *input, double expected) {
+void testJsonParseBool(char *input, bool expected) {
   int i = 0;
   JSON *result;
-  parseBool(input, &i, strlen(input) - 1, &result);
+  parseValue(input, &i, strlen(input) - 1, &result);
 
   int expectedConsumend = strlen(input);
-
-  TEST_ASSERT_EQUAL_INT32(J_BOOL, result->type);
-  TEST_ASSERT_EQUAL_INT8(expected, result->value.boolean);
   TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
+
+  JSON exp = {J_BOOL, {.boolean=expected}};
+  testValue(&exp, result);
 }
 
 void test_json_parseBool_1() {

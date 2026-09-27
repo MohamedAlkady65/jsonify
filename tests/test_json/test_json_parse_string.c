@@ -1,7 +1,7 @@
+#include "../utils/utils.h"
 #include <assert.h>
 #include <json.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unity.h>
 
@@ -9,16 +9,13 @@ void testJsonParseString(char *input, char *expected) {
   int i = 0;
   JSON *result;
 
-  parseString(input, &i, strlen(input) - 1, &result);
+  parseValue(input, &i, strlen(input) - 1, &result);
 
-  int expectedLen = strlen(expected);
   int expectedConsumend = strlen(input);
-
-  TEST_ASSERT_EQUAL_INT32(J_STRING, result->type);
-  TEST_ASSERT_EQUAL_INT32(expectedLen, result->value.string.len);
   TEST_ASSERT_EQUAL_INT32(expectedConsumend, i + 1);
-  TEST_ASSERT_EQUAL_INT32(strlen(expected), strlen(result->value.string.data));
-  TEST_ASSERT_EQUAL_STRING(expected, result->value.string.data);
+  
+  JSON exp = {J_STRING, {.string = {expected, strlen(expected)}}};
+  testValue(&exp, result);
 }
 
 void test_json_parseString_1() {
