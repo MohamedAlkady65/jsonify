@@ -8,8 +8,8 @@
 void testJsonParseBool(char *input, bool expected) {
   Json *result = NULL;
   JsonParser *parser = jsonParser_create(input, strlen(input));
-  jsonParser_parseValue(parser, &result);
-
+  err_t err = jsonParser_parseValue(parser, &result);
+  TEST_ASSERT_EQUAL_INT(OK, err);
   int expectedConsumend = strlen(input);
   TEST_ASSERT_EQUAL_INT32(expectedConsumend, parser->cursor + 1);
 

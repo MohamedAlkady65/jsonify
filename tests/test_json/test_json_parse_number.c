@@ -6,8 +6,8 @@
 void testJsonParseNumber(char *input, double expected, int expectedConsumed) {
   Json *result = NULL;
   JsonParser *parser = jsonParser_create(input, strlen(input));
-  jsonParser_parseValue(parser, &result);
-
+  err_t err = jsonParser_parseValue(parser, &result);
+  TEST_ASSERT_EQUAL_INT(OK, err);
   int expectedConsumend =
       expectedConsumed == -1 ? strlen(input) : expectedConsumed;
 

@@ -1,4 +1,5 @@
 #include "../utils/utils.h"
+#include "error.h"
 #include <assert.h>
 #include <parser.h>
 #include <stb_ds.h>
@@ -9,8 +10,8 @@
 void testJsonParseArray(char *input, Json elements[], int n) {
   Json *result = NULL;
   JsonParser *parser = jsonParser_create(input, strlen(input));
-  jsonParser_parseValue(parser, &result);
-
+  err_t err = jsonParser_parseValue(parser, &result);
+  TEST_ASSERT_EQUAL_INT(OK, err);
   JsonList list = {n, elements};
   Json expected = {J_LIST, {.list = &list}};
   testValue(&expected, result);

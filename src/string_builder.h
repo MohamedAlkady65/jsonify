@@ -14,7 +14,7 @@ typedef struct StringBuilder {
   int capacity;
 } StringBuilder;
 
-StringBuilder stringBuilder_new();
+StringBuilder *stringBuilder_create();
 
 void stringBuilder_append(StringBuilder *builder, char *str, int n);
 

@@ -1,6 +1,7 @@
 #ifndef JSONIFY_PARSER_H
 #define JSONIFY_PARSER_H
 
+#include "error.h"
 #include "json.h"
 
 typedef struct JsonParser {
@@ -11,6 +12,6 @@ typedef struct JsonParser {
 
 JsonParser *jsonParser_create(char *data, int n);
 
-void jsonParser_parseValue(JsonParser *parser, Json **result);
+err_t jsonParser_parseValue(JsonParser *parser, Json **result);
 
 #endif // JSONIFY_PARSER_H

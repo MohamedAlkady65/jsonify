@@ -6,10 +6,12 @@
 
 const int INITIAL_STRING_BUILDER_BUFFER_SIZE = 4;
 
-StringBuilder stringBuilder_new() {
+StringBuilder *stringBuilder_create() {
   char *buf = malloc(INITIAL_STRING_BUILDER_BUFFER_SIZE);
   assert(buf != NULL);
-  return (StringBuilder){buf, 0, INITIAL_STRING_BUILDER_BUFFER_SIZE};
+  StringBuilder *builder = malloc(sizeof(StringBuilder));
+  *builder = (StringBuilder){buf, 0, INITIAL_STRING_BUILDER_BUFFER_SIZE};
+  return builder;
 }
 
 void stringBuilder_append(StringBuilder *builder, char *str, int n) {
