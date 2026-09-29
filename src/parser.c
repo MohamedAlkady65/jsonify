@@ -14,46 +14,46 @@ JsonParser *jsonParser_create(char *data, int n) {
   return parser;
 }
 
-err_t jsonParser_skipWs(JsonParser *parser) {
-  while (parser->cursor < parser->n && (parser->data[parser->cursor] == ' ' ||
-                                        parser->data[parser->cursor] == '\n')) {
-    parser->cursor++;
+err_t jsonParser_skipWs(JsonParser *this) {
+  while (this->cursor < this->n && (this->data[this->cursor] == ' ' ||
+                                        this->data[this->cursor] == '\n')) {
+    this->cursor++;
   }
-  if (parser->cursor >= parser->n) {
+  if (this->cursor >= this->n) {
     return ERR;
   }
   return OK;
 }
 
-err_t jsonParser_parseStringHelper(JsonParser *parser, String *result) {
+err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
   StringBuilder *builder = stringBuilder_create();
 
-  if (parser->data[parser->cursor] != '"') {
+  if (this->data[this->cursor] != '"') {
     return ERR;
   }
 
   bool escaping = false;
 
-  (parser->cursor)++;
+  (this->cursor)++;
 
-  for (; parser->cursor < parser->n; (parser->cursor)++) {
-    if (!escaping && parser->data[parser->cursor] == '"') {
+  for (; this->cursor < this->n; (this->cursor)++) {
+    if (!escaping && this->data[this->cursor] == '"') {
       String builded = stringBuilder_build(builder);
       *result = builded;
       return OK;
     }
 
-    if (!escaping && parser->data[parser->cursor] == '\\') {
+    if (!escaping && this->data[this->cursor] == '\\') {
       escaping = true;
       continue;
     }
 
     if (escaping) {
 
-      if (parser->data[parser->cursor] == '"' ||
-          parser->data[parser->cursor] == '\\') {
-        stringBuilder_append(builder, parser->data + parser->cursor, 1);
-      } else if (parser->data[parser->cursor] == 'n') {
+      if (this->data[this->cursor] == '"' ||
+          this->data[this->cursor] == '\\') {
+        stringBuilder_append(builder, this->data + this->cursor, 1);
+      } else if (this->data[this->cursor] == 'n') {
         char newLine = '\n';
         stringBuilder_append(builder, (&newLine), 1);
       } else {
@@ -64,14 +64,14 @@ err_t jsonParser_parseStringHelper(JsonParser *parser, String *result) {
       continue;
     }
 
-    stringBuilder_append(builder, parser->data + parser->cursor, 1);
+    stringBuilder_append(builder, this->data + this->cursor, 1);
   }
   return ERR;
 }
 
-err_t jsonParser_parseString(JsonParser *parser, Json **result) {
+err_t jsonParser_parseString(JsonParser *this, Json **result) {
   String str;
-  err_t err = jsonParser_parseStringHelper(parser, &str);
+  err_t err = jsonParser_parseStringHelper(this, &str);
 
   if (err != OK) {
     return err;
@@ -84,25 +84,25 @@ err_t jsonParser_parseString(JsonParser *parser, Json **result) {
   return OK;
 }
 
-err_t jsonParser_parseNumber(JsonParser *parser, Json **result) {
+err_t jsonParser_parseNumber(JsonParser *this, Json **result) {
 
   double res = 0;
   bool negative = false;
   bool hasFraction = false;
   long long fractionFactor = 10;
 
-  if (parser->data[parser->cursor] == '-') {
+  if (this->data[this->cursor] == '-') {
     negative = true;
-    parser->cursor++;
+    this->cursor++;
   }
 
-  if (parser->cursor >= parser->n) {
+  if (this->cursor >= this->n) {
     return ERR;
   }
 
-  for (; parser->cursor < parser->n; parser->cursor++) {
+  for (; this->cursor < this->n; this->cursor++) {
 
-    if (parser->data[parser->cursor] == '.') {
+    if (this->data[this->cursor] == '.') {
       if (hasFraction) {
         return ERR;
       }
@@ -112,15 +112,15 @@ err_t jsonParser_parseNumber(JsonParser *parser, Json **result) {
       continue;
     }
 
-    if (parser->data[parser->cursor] >= '0' &&
-        parser->data[parser->cursor] <= '9') {
+    if (this->data[this->cursor] >= '0' &&
+        this->data[this->cursor] <= '9') {
       if (hasFraction) {
         res = res +
-              ((double)(parser->data[parser->cursor] - '0') / fractionFactor);
+              ((double)(this->data[this->cursor] - '0') / fractionFactor);
         fractionFactor *= 10;
       } else {
 
-        res = (res * 10) + (parser->data[parser->cursor] - '0');
+        res = (res * 10) + (this->data[this->cursor] - '0');
       }
 
       continue;
@@ -141,23 +141,23 @@ err_t jsonParser_parseNumber(JsonParser *parser, Json **result) {
   assert(result != NULL);
   (*result)->type = J_NUMBER;
   (*result)->value.number = res;
-  parser->cursor--;
+  this->cursor--;
   return OK;
 }
 
-err_t jsonParser_parseBool(JsonParser *parser, Json **result) {
+err_t jsonParser_parseBool(JsonParser *this, Json **result) {
   char *words[] = {"true", "false"};
   int wordsLen[] = {4, 5};
   bool wordsValue[] = {true, false};
 
   for (int w = 0; w < 2; w++) {
-    for (; parser->cursor < parser->n && parser->cursor < wordsLen[w];
-         parser->cursor++) {
-      if (parser->data[parser->cursor] != words[w][parser->cursor]) {
+    for (; this->cursor < this->n && this->cursor < wordsLen[w];
+         this->cursor++) {
+      if (this->data[this->cursor] != words[w][this->cursor]) {
         break;
       }
 
-      if (parser->cursor == wordsLen[w] - 1) {
+      if (this->cursor == wordsLen[w] - 1) {
         *result = malloc(sizeof(Json));
         assert(result != NULL);
         (*result)->type = J_BOOL;
@@ -170,37 +170,37 @@ err_t jsonParser_parseBool(JsonParser *parser, Json **result) {
   return ERR;
 }
 
-err_t jsonParser_processPair(JsonParser *parser, JsonObject *object) {
+err_t jsonParser_processPair(JsonParser *this, JsonObject *object) {
   String key;
   err_t err;
 
-  err = jsonParser_parseStringHelper(parser, &key);
+  err = jsonParser_parseStringHelper(this, &key);
 
   if (err != OK) {
     return err;
   }
-  parser->cursor++;
+  this->cursor++;
 
-  err = jsonParser_skipWs(parser);
+  err = jsonParser_skipWs(this);
   if (err != OK) {
     return err;
   }
 
-  if (parser->data[parser->cursor] != ':') {
+  if (this->data[this->cursor] != ':') {
     return OK;
   };
-  parser->cursor++;
+  this->cursor++;
 
   Json *value;
-  err = jsonParser_parseValue(parser, &value);
+  err = jsonParser_parseValue(this, &value);
 
   if (err != OK) {
     return err;
   }
 
-  parser->cursor++;
+  this->cursor++;
 
-  err = jsonParser_skipWs(parser);
+  err = jsonParser_skipWs(this);
   if (err != OK) {
     return err;
   }
@@ -210,36 +210,36 @@ err_t jsonParser_processPair(JsonParser *parser, JsonObject *object) {
   return OK;
 }
 
-err_t jsonParser_parseObject(JsonParser *parser, Json **result) {
+err_t jsonParser_parseObject(JsonParser *this, Json **result) {
   JsonObject *res = json_object_create();
   assert(res != NULL);
 
-  if (parser->data[parser->cursor] != '{') {
+  if (this->data[this->cursor] != '{') {
     return OK;
   };
 
-  parser->cursor++;
-  while (parser->cursor < parser->n) {
-    err_t err = jsonParser_skipWs(parser);
+  this->cursor++;
+  while (this->cursor < this->n) {
+    err_t err = jsonParser_skipWs(this);
     if (err != OK) {
       return err;
     }
-    if (parser->data[parser->cursor] == '}')
+    if (this->data[this->cursor] == '}')
       break;
-    err = jsonParser_processPair(parser, res);
+    err = jsonParser_processPair(this, res);
     if (err != OK) {
       return err;
     }
-    if (parser->data[parser->cursor] != ',')
+    if (this->data[this->cursor] != ',')
       break;
-    parser->cursor++;
+    this->cursor++;
   }
 
-  if (parser->cursor >= parser->n || parser->data[parser->cursor] != '}') {
+  if (this->cursor >= this->n || this->data[this->cursor] != '}') {
     return ERR;
   }
 
-  parser->cursor++;
+  this->cursor++;
 
   *result = malloc(sizeof(Json));
   assert(result != NULL);
@@ -249,14 +249,14 @@ err_t jsonParser_parseObject(JsonParser *parser, Json **result) {
   return OK;
 }
 
-err_t jsonParser_processArrayElement(JsonParser *parser, JsonList *list) {
+err_t jsonParser_processArrayElement(JsonParser *this, JsonList *list) {
   Json *value;
-  err_t err = jsonParser_parseValue(parser, &value);
+  err_t err = jsonParser_parseValue(this, &value);
   if (err != OK) {
     return err;
   }
-  parser->cursor++;
-  err = jsonParser_skipWs(parser);
+  this->cursor++;
+  err = jsonParser_skipWs(this);
   if (err != OK) {
     return err;
   }
@@ -266,39 +266,39 @@ err_t jsonParser_processArrayElement(JsonParser *parser, JsonList *list) {
   return OK;
 }
 
-err_t jsonParser_parseArray(JsonParser *parser, Json **result) {
+err_t jsonParser_parseArray(JsonParser *this, Json **result) {
   JsonList *res = json_list_create();
   assert(res != NULL);
 
-  if (parser->data[parser->cursor] != '[') {
+  if (this->data[this->cursor] != '[') {
     return OK;
   };
-  parser->cursor++;
-  while (parser->cursor < parser->n) {
-    err_t err = jsonParser_skipWs(parser);
+  this->cursor++;
+  while (this->cursor < this->n) {
+    err_t err = jsonParser_skipWs(this);
     if (err != OK) {
       return err;
     }
 
-    if (parser->data[parser->cursor] == ']')
+    if (this->data[this->cursor] == ']')
       break;
 
-    err = jsonParser_processArrayElement(parser, res);
+    err = jsonParser_processArrayElement(this, res);
 
     if (err != OK) {
       return err;
     }
 
-    if (parser->data[parser->cursor] != ',')
+    if (this->data[this->cursor] != ',')
       break;
-    parser->cursor++;
+    this->cursor++;
   }
 
-  if (parser->cursor >= parser->n || parser->data[parser->cursor] != ']') {
+  if (this->cursor >= this->n || this->data[this->cursor] != ']') {
     return ERR;
   }
 
-  parser->cursor++;
+  this->cursor++;
 
   *result = malloc(sizeof(Json));
   assert(result != NULL);
@@ -331,36 +331,36 @@ err_t jsonParser_valueType(char ch, JsonValueType *out) {
   return ERR;
 }
 
-err_t jsonParser_parseValue(JsonParser *parser, Json **result) {
+err_t jsonParser_parseValue(JsonParser *this, Json **result) {
 
   err_t err;
 
-  err = jsonParser_skipWs(parser);
+  err = jsonParser_skipWs(this);
   if (err != OK) {
     return err;
   }
   JsonValueType type;
 
-  err = jsonParser_valueType(parser->data[parser->cursor], &type);
+  err = jsonParser_valueType(this->data[this->cursor], &type);
   if (err != OK) {
     return err;
   }
 
   switch (type) {
   case J_LIST:
-    err = jsonParser_parseArray(parser, result);
+    err = jsonParser_parseArray(this, result);
     break;
   case J_OBJECT:
-    err = jsonParser_parseObject(parser, result);
+    err = jsonParser_parseObject(this, result);
     break;
   case J_STRING:
-    err = jsonParser_parseString(parser, result);
+    err = jsonParser_parseString(this, result);
     break;
   case J_NUMBER:
-    err = jsonParser_parseNumber(parser, result);
+    err = jsonParser_parseNumber(this, result);
     break;
   case J_BOOL:
-    err = jsonParser_parseBool(parser, result);
+    err = jsonParser_parseBool(this, result);
     break;
   default:
     return ERR;

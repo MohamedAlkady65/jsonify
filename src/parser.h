@@ -12,6 +12,6 @@ typedef struct JsonParser {
 
 JsonParser *jsonParser_create(char *data, int n);
 
-err_t jsonParser_parseValue(JsonParser *parser, Json **result);
+err_t jsonParser_parseValue(JsonParser *this, Json **result);
 
 #endif // JSONIFY_PARSER_H
