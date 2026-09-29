@@ -13,21 +13,8 @@ typedef enum JsonValueType {
   J_NULL,
 } JsonValueType;
 
-typedef struct JsonObjectPair {
-  char *key;
-  int keyLen;
-  struct Json *value;
-} JsonObjectPair;
-
-typedef struct JsonObject {
-  int length;
-  struct JsonObjectPair *elements;
-} JsonObject;
-
-typedef struct JsonList {
-  int length;
-  struct Json *elements;
-} JsonList;
+typedef struct JsonList JsonList;
+typedef struct JsonObject JsonObject;
 
 typedef union JsonValue {
   String string;

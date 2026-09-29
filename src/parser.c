@@ -1,10 +1,9 @@
 #include "parser.h"
 #include "error.h"
+#include "json_list.h"
+#include "json_object.h"
 #include <assert.h>
 #include <stdlib.h>
-#include <string.h>
-#define STB_DS_IMPLEMENTATION
-#include <stb_ds.h>
 
 JsonParser *jsonParser_create(char *data, int n) {
   JsonParser *parser = malloc(sizeof(JsonParser));
@@ -171,7 +170,7 @@ err_t jsonParser_parseBool(JsonParser *parser, Json **result) {
   return ERR;
 }
 
-err_t jsonParser_processPair(JsonParser *parser, JsonObject **object) {
+err_t jsonParser_processPair(JsonParser *parser, JsonObject *object) {
   String key;
   err_t err;
 
@@ -205,19 +204,15 @@ err_t jsonParser_processPair(JsonParser *parser, JsonObject **object) {
   if (err != OK) {
     return err;
   }
-  shputs(
-      (*object)->elements,
-      ((JsonObjectPair){.key = key.data, .keyLen = key.len, .value = value}));
-  (*object)->length++;
+
+  json_object_put(object, key, value);
 
   return OK;
 }
 
 err_t jsonParser_parseObject(JsonParser *parser, Json **result) {
-  JsonObject *res = malloc(sizeof(JsonObject));
+  JsonObject *res = json_object_create();
   assert(res != NULL);
-  res->length = 0;
-  res->elements = NULL;
 
   if (parser->data[parser->cursor] != '{') {
     return OK;
@@ -231,7 +226,7 @@ err_t jsonParser_parseObject(JsonParser *parser, Json **result) {
     }
     if (parser->data[parser->cursor] == '}')
       break;
-    err = jsonParser_processPair(parser, &res);
+    err = jsonParser_processPair(parser, res);
     if (err != OK) {
       return err;
     }
@@ -254,7 +249,7 @@ err_t jsonParser_parseObject(JsonParser *parser, Json **result) {
   return OK;
 }
 
-err_t jsonParser_processArrayElement(JsonParser *parser, JsonList **list) {
+err_t jsonParser_processArrayElement(JsonParser *parser, JsonList *list) {
   Json *value;
   err_t err = jsonParser_parseValue(parser, &value);
   if (err != OK) {
@@ -265,18 +260,15 @@ err_t jsonParser_processArrayElement(JsonParser *parser, JsonList **list) {
   if (err != OK) {
     return err;
   }
-  arrput((*list)->elements, *value);
-  (*list)->length++;
+
+  json_list_put(list, value);
 
   return OK;
 }
 
 err_t jsonParser_parseArray(JsonParser *parser, Json **result) {
-  JsonList *res = malloc(sizeof(JsonList));
+  JsonList *res = json_list_create();
   assert(res != NULL);
-
-  res->length = 0;
-  res->elements = NULL;
 
   if (parser->data[parser->cursor] != '[') {
     return OK;
@@ -291,7 +283,7 @@ err_t jsonParser_parseArray(JsonParser *parser, Json **result) {
     if (parser->data[parser->cursor] == ']')
       break;
 
-    err = jsonParser_processArrayElement(parser, &res);
+    err = jsonParser_processArrayElement(parser, res);
 
     if (err != OK) {
       return err;

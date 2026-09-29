@@ -1,6 +1,8 @@
+#include "string_builder.h"
 #include <assert.h>
+#include <json_list.h>
+#include <json_object.h>
 #include <parser.h>
-#include <stb_ds.h>
 #include <unity.h>
 
 void testValue(Json *expected, Json *actual) {
@@ -17,21 +19,25 @@ void testValue(Json *expected, Json *actual) {
     TEST_ASSERT_EQUAL_INT8(expected->value.boolean, actual->value.boolean);
     break;
   case J_LIST:
-    TEST_ASSERT_EQUAL_INT32(expected->value.list->length,
-                            actual->value.list->length);
-    for (int i = 0; i < actual->value.list->length; i++) {
-      testValue(expected->value.list->elements + i,
-                actual->value.list->elements + i);
+
+    TEST_ASSERT_EQUAL_INT32(json_list_len(expected->value.list),
+                            json_list_len(actual->value.list));
+
+    for (int i = 0; i < json_list_len(expected->value.list); i++) {
+      testValue(json_list_get(expected->value.list, i),
+                json_list_get(actual->value.list, i));
     }
     break;
   case J_OBJECT:
-    TEST_ASSERT_EQUAL_INT32(expected->value.object->length,
-                            actual->value.object->length);
+    TEST_ASSERT_EQUAL_INT32(json_object_len(expected->value.object),
+                            json_object_len(actual->value.object));
 
-    for (int i = 0; i < actual->value.object->length; i++) {
-      testValue(expected->value.object->elements[i].value,
-                shget(actual->value.object->elements,
-                      expected->value.object->elements[i].key));
+    String *keys = json_object_keys(expected->value.object);
+
+    for (int i = 0; i < json_object_len(expected->value.object); i++) {
+
+      testValue(json_object_get(expected->value.object, keys[i]),
+                json_object_get(actual->value.object, keys[i]));
     }
     break;
   default:
