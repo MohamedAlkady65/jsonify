@@ -16,7 +16,7 @@ JsonParser *jsonParser_create(char *data, int n) {
 
 err_t jsonParser_skipWs(JsonParser *this) {
   while (this->cursor < this->n && (this->data[this->cursor] == ' ' ||
-                                        this->data[this->cursor] == '\n')) {
+                                    this->data[this->cursor] == '\n')) {
     this->cursor++;
   }
   if (this->cursor >= this->n) {
@@ -50,8 +50,7 @@ err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
 
     if (escaping) {
 
-      if (this->data[this->cursor] == '"' ||
-          this->data[this->cursor] == '\\') {
+      if (this->data[this->cursor] == '"' || this->data[this->cursor] == '\\') {
         stringBuilder_append(builder, this->data + this->cursor, 1);
       } else if (this->data[this->cursor] == 'n') {
         char newLine = '\n';
@@ -112,11 +111,9 @@ err_t jsonParser_parseNumber(JsonParser *this, Json **result) {
       continue;
     }
 
-    if (this->data[this->cursor] >= '0' &&
-        this->data[this->cursor] <= '9') {
+    if (this->data[this->cursor] >= '0' && this->data[this->cursor] <= '9') {
       if (hasFraction) {
-        res = res +
-              ((double)(this->data[this->cursor] - '0') / fractionFactor);
+        res = res + ((double)(this->data[this->cursor] - '0') / fractionFactor);
         fractionFactor *= 10;
       } else {
 
@@ -151,19 +148,39 @@ err_t jsonParser_parseBool(JsonParser *this, Json **result) {
   bool wordsValue[] = {true, false};
 
   for (int w = 0; w < 2; w++) {
-    for (; this->cursor < this->n && this->cursor < wordsLen[w];
-         this->cursor++) {
-      if (this->data[this->cursor] != words[w][this->cursor]) {
+    for (int i = 0; this->cursor < this->n && i < wordsLen[w];
+         this->cursor++, i++) {
+      if (this->data[this->cursor] != words[w][i]) {
         break;
       }
 
-      if (this->cursor == wordsLen[w] - 1) {
+      if (i == wordsLen[w] - 1) {
         *result = malloc(sizeof(Json));
         assert(result != NULL);
         (*result)->type = J_BOOL;
         (*result)->value.boolean = wordsValue[w];
         return OK;
       }
+    }
+  }
+
+  return ERR;
+}
+
+err_t jsonParser_parseNull(JsonParser *this, Json **result) {
+  char *word = "null";
+  int wordLen = 4;
+
+  for (int i = 0; this->cursor < this->n && i < wordLen; this->cursor++, i++) {
+    if (this->data[this->cursor] != word[i]) {
+      break;
+    }
+
+    if (i == wordLen - 1) {
+      *result = malloc(sizeof(Json));
+      assert(result != NULL);
+      (*result)->type = J_NULL;
+      return OK;
     }
   }
 
@@ -361,6 +378,9 @@ err_t jsonParser_parseValue(JsonParser *this, Json **result) {
     break;
   case J_BOOL:
     err = jsonParser_parseBool(this, result);
+    break;
+  case J_NULL:
+    err = jsonParser_parseNull(this, result);
     break;
   default:
     return ERR;

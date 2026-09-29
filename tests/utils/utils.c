@@ -40,6 +40,8 @@ void testValue(Json *expected, Json *actual) {
                 json_object_get(actual->value.object, keys[i]));
     }
     break;
+  case J_NULL:
+    break;
   default:
     assert(false);
     break;
