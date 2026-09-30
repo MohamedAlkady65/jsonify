@@ -31,6 +31,8 @@ void testStringBuilderHelper(char *str) {
 
   TEST_ASSERT_EQUAL_STRING(str, result.data);
   TEST_ASSERT_EQUAL_INT32(n, result.len);
+
+  stringBuilder_destroy(builder);
 }
 
 void test_stringBuilder_init() {
@@ -40,6 +42,8 @@ void test_stringBuilder_init() {
   TEST_ASSERT_EQUAL_INT32(INITIAL_STRING_BUILDER_BUFFER_SIZE,
                           builder->capacity);
   TEST_ASSERT_NOT_NULL(builder->buf);
+
+  stringBuilder_destroy(builder);
 }
 
 void test_stringBuilder_1() {

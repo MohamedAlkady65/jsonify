@@ -1,5 +1,6 @@
 
 #include "json.h"
+#include "error.h"
 #include "json_list.h"
 #include "json_object.h"
 #include "parser.h"
@@ -33,5 +34,7 @@ void json_destroy(Json *this) {
 
 err_t json_parse(char *data, Json **out) {
   JsonParser *parser = jsonParser_new(data, strlen(data));
-  return jsonParser_parseValue(parser, out);
+  err_t err = jsonParser_parseValue(parser, out);
+  jsonParser_destroy(parser);
+  return err;
 }

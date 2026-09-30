@@ -10,8 +10,7 @@
 
 void testJsonParseArray(char *input, Json elements[], int n) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_new(input, strlen(input));
-  err_t err = jsonParser_parseValue(parser, &result);
+  err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
   JsonList *expectedList = json_list_new();
@@ -20,9 +19,12 @@ void testJsonParseArray(char *input, Json elements[], int n) {
     json_list_put(expectedList, elements + i);
   }
 
-  Json expected = {J_LIST, {.list = expectedList}};
+  Json *expected = json_new();
+  *expected = (Json){J_LIST, {.list = expectedList}};
 
-  testValue(&expected, result);
+  testValue(expected, result);
+  json_destroy(result);
+  json_destroy(expected);
 }
 
 void test_json_parseArray_1() {

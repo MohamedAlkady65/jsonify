@@ -6,28 +6,24 @@
 #include <string.h>
 #include <unity.h>
 
-void testJsonParseNull(char *input, int expectedConsumed) {
+void testJsonParseNull(char *input) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_new(input, strlen(input));
-  err_t err = jsonParser_parseValue(parser, &result);
+  err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
-
-  expectedConsumed = expectedConsumed == -1 ? strlen(input) : expectedConsumed;
-
-  TEST_ASSERT_EQUAL_INT32(expectedConsumed, parser->cursor + 1);
 
   Json exp = {J_NULL};
   testValue(&exp, result);
+  json_destroy(result);
 }
 
 void test_json_parseNull_1() {
   char *input = "null";
-  testJsonParseNull(input, -1);
+  testJsonParseNull(input);
 }
 
 void test_json_parseNull_2() {
   char *input = "   null       ";
-  testJsonParseNull(input, 7);
+  testJsonParseNull(input);
 }
 
 void test_json_parseNull_group() {

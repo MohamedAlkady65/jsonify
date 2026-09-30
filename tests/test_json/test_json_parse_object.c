@@ -1,5 +1,4 @@
 #include "../utils/utils.h"
-#include "string_builder.h"
 #include <assert.h>
 #include <json_object.h>
 #include <parser.h>
@@ -9,18 +8,21 @@
 
 void testJsonParseObject(char *input, char *keys[], Json *values, int n) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_new(input, strlen(input));
-  err_t err = jsonParser_parseValue(parser, &result);
+  err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
   JsonObject *object = json_object_new();
-  Json expected = {J_OBJECT, {.object = object}};
+
+  Json *expected = json_new();
+  *expected = (Json){J_OBJECT, {.object = object}};
 
   for (int i = 0; i < n; i++) {
     json_object_put(object, (String){keys[i], strlen(keys[i])}, values + i);
   }
 
-  testValue(&expected, result);
+  testValue(expected, result);
+  json_destroy(result);
+  json_destroy(expected);
 }
 
 void test_json_parseObject_1() {

@@ -3,6 +3,7 @@
 #include <json_list.h>
 #include <json_object.h>
 #include <parser.h>
+#include <stdlib.h>
 #include <unity.h>
 
 void testValue(Json *expected, Json *actual) {
@@ -39,6 +40,8 @@ void testValue(Json *expected, Json *actual) {
       testValue(json_object_get(expected->value.object, keys[i]),
                 json_object_get(actual->value.object, keys[i]));
     }
+
+    free(keys);
     break;
   case J_NULL:
     break;

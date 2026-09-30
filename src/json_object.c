@@ -55,8 +55,16 @@ void json_object_destroy(JsonObject *this) {
   if (this == NULL) {
     return;
   }
+
+  int n = this->length;
+  for (int i = 0; i < n; i++) {
+    free(this->elements[i].key);
+    json_destroy(this->elements[i].value);
+  }
+
   if (this->elements != NULL) {
     shfree(this->elements);
   }
+  
   free(this);
 }

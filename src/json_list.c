@@ -33,6 +33,12 @@ void json_list_destroy(JsonList *this) {
   if (this == NULL) {
     return;
   }
+
+  int n = this->length;
+  for (int i = 0; i < n; i++) {
+    json_destroy(this->elements[i]);
+  }
+
   if (this->elements != NULL) {
     arrfree(this->elements);
   }
