@@ -5,12 +5,22 @@
 
 const int INITIAL_STRING_BUILDER_BUFFER_SIZE = 4;
 
-StringBuilder *stringBuilder_create() {
+StringBuilder *stringBuilder_new() {
   char *buf = malloc(INITIAL_STRING_BUILDER_BUFFER_SIZE);
   assert(buf != NULL);
   StringBuilder *builder = malloc(sizeof(StringBuilder));
   *builder = (StringBuilder){buf, 0, INITIAL_STRING_BUILDER_BUFFER_SIZE};
   return builder;
+}
+
+void stringBuilder_destroy(StringBuilder *this) {
+  if (this == NULL) {
+    return;
+  }
+  if (this->buf != NULL) {
+    free(this->buf);
+  }
+  free(this);
 }
 
 void stringBuilder_append(StringBuilder *builder, char *str, int n) {
@@ -37,6 +47,8 @@ String stringBuilder_build(StringBuilder *builder) {
   char *result;
   result = realloc(builder->buf, builder->len);
   assert(result != NULL);
+
+  builder->buf = NULL;
 
   return (String){result, builder->len - 1};
 }

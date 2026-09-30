@@ -3,7 +3,9 @@
 
 #include "json.h"
 
-JsonList *json_list_create();
+JsonList *json_list_new();
+
+void json_list_destroy(JsonList *this);
 
 void json_list_put(JsonList *this, Json *value);
 

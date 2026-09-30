@@ -1,7 +1,8 @@
 #ifndef JSONIFY_JSON_H
 #define JSONIFY_JSON_H
 
-#include "string_builder.h"
+#include "custom_string.h"
+#include "error.h"
 #include <stdbool.h>
 
 typedef enum JsonValueType {
@@ -29,5 +30,10 @@ typedef struct Json {
   union JsonValue value;
 } Json;
 
+Json *json_new();
+
+void json_destroy(Json *this);
+
+err_t json_parse(char *data, Json **out);
 
 #endif // JSONIFY_JSON_H

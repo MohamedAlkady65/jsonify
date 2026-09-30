@@ -10,7 +10,7 @@ typedef struct JsonParser {
   int cursor;
 } JsonParser;
 
-JsonParser *jsonParser_create(char *data, int n);
+JsonParser *jsonParser_new(char *data, int n);
 
 err_t jsonParser_parseValue(JsonParser *this, Json **result);
 

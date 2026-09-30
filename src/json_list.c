@@ -9,8 +9,7 @@ typedef struct JsonList {
   struct Json **elements;
 } JsonList;
 
-
-JsonList *json_list_create() {
+JsonList *json_list_new() {
   JsonList *list = malloc(sizeof(JsonList));
   assert(list != NULL);
   list->elements = NULL;
@@ -29,3 +28,13 @@ Json *json_list_get(JsonList *this, int i) {
 }
 
 int json_list_len(JsonList *this) { return this->length; }
+
+void json_list_destroy(JsonList *this) {
+  if (this == NULL) {
+    return;
+  }
+  if (this->elements != NULL) {
+    arrfree(this->elements);
+  }
+  free(this);
+}

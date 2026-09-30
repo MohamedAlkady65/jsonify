@@ -5,11 +5,10 @@
 
 void testJsonParseNumber(char *input, double expected, int expectedConsumed) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_create(input, strlen(input));
+  JsonParser *parser = jsonParser_new(input, strlen(input));
   err_t err = jsonParser_parseValue(parser, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
-  expectedConsumed =
-      expectedConsumed == -1 ? strlen(input) : expectedConsumed;
+  expectedConsumed = expectedConsumed == -1 ? strlen(input) : expectedConsumed;
 
   TEST_ASSERT_EQUAL_INT32(expectedConsumed, parser->cursor + 1);
 

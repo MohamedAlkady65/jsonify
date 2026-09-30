@@ -16,7 +16,7 @@ typedef struct JsonObject {
   struct JsonObjectPair *elements;
 } JsonObject;
 
-JsonObject *json_object_create() {
+JsonObject *json_object_new() {
   JsonObject *object = malloc(sizeof(JsonObject));
   assert(object != NULL);
   object->elements = NULL;
@@ -50,3 +50,13 @@ String *json_object_keys(JsonObject *this) {
 }
 
 int json_object_len(JsonObject *this) { return this->length; }
+
+void json_object_destroy(JsonObject *this) {
+  if (this == NULL) {
+    return;
+  }
+  if (this->elements != NULL) {
+    shfree(this->elements);
+  }
+  free(this);
+}

@@ -4,7 +4,7 @@
 #include <unity.h>
 
 void testStringBuilderHelper(char *str) {
-  StringBuilder* builder = stringBuilder_create();
+  StringBuilder *builder = stringBuilder_new();
 
   int n = strlen(str);
 
@@ -34,10 +34,11 @@ void testStringBuilderHelper(char *str) {
 }
 
 void test_stringBuilder_init() {
-  StringBuilder* builder = stringBuilder_create();
+  StringBuilder *builder = stringBuilder_new();
 
   TEST_ASSERT_EQUAL_INT32(0, builder->len);
-  TEST_ASSERT_EQUAL_INT32(INITIAL_STRING_BUILDER_BUFFER_SIZE, builder->capacity);
+  TEST_ASSERT_EQUAL_INT32(INITIAL_STRING_BUILDER_BUFFER_SIZE,
+                          builder->capacity);
   TEST_ASSERT_NOT_NULL(builder->buf);
 }
 

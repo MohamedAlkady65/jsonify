@@ -2,16 +2,24 @@
 #include "error.h"
 #include "json_list.h"
 #include "json_object.h"
+#include "string_builder.h"
 #include <assert.h>
 #include <stdlib.h>
 
-JsonParser *jsonParser_create(char *data, int n) {
+JsonParser *jsonParser_new(char *data, int n) {
   JsonParser *parser = malloc(sizeof(JsonParser));
   assert(parser != NULL);
   parser->data = data;
   parser->n = n;
   parser->cursor = 0;
   return parser;
+}
+
+void jsonParser_destroy(JsonParser *this) {
+  if (this == NULL) {
+    return;
+  }
+  free(this);
 }
 
 err_t jsonParser_skipWs(JsonParser *this) {
@@ -26,21 +34,25 @@ err_t jsonParser_skipWs(JsonParser *this) {
 }
 
 err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
-  StringBuilder *builder = stringBuilder_create();
 
   if (this->data[this->cursor] != '"') {
     return ERR;
   }
 
+  StringBuilder *builder = stringBuilder_new();
+
   bool escaping = false;
 
   (this->cursor)++;
+
+  err_t returnCode = ERR;
 
   for (; this->cursor < this->n; (this->cursor)++) {
     if (!escaping && this->data[this->cursor] == '"') {
       String builded = stringBuilder_build(builder);
       *result = builded;
-      return OK;
+      returnCode = OK;
+      break;
     }
 
     if (!escaping && this->data[this->cursor] == '\\') {
@@ -56,7 +68,7 @@ err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
         char newLine = '\n';
         stringBuilder_append(builder, (&newLine), 1);
       } else {
-        return ERR;
+        break;
       }
 
       escaping = false;
@@ -65,7 +77,9 @@ err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
 
     stringBuilder_append(builder, this->data + this->cursor, 1);
   }
-  return ERR;
+  stringBuilder_destroy(builder);
+
+  return returnCode;
 }
 
 err_t jsonParser_parseString(JsonParser *this, Json **result) {
@@ -76,7 +90,7 @@ err_t jsonParser_parseString(JsonParser *this, Json **result) {
     return err;
   }
 
-  *result = malloc(sizeof(Json));
+  *result = json_new();
   assert(result != NULL);
   (*result)->type = J_STRING;
   (*result)->value.string = str;
@@ -134,7 +148,7 @@ err_t jsonParser_parseNumber(JsonParser *this, Json **result) {
     res *= -1;
   }
 
-  *result = malloc(sizeof(Json));
+  *result = json_new();
   assert(result != NULL);
   (*result)->type = J_NUMBER;
   (*result)->value.number = res;
@@ -155,7 +169,7 @@ err_t jsonParser_parseBool(JsonParser *this, Json **result) {
       }
 
       if (i == wordsLen[w] - 1) {
-        *result = malloc(sizeof(Json));
+        *result = json_new();
         assert(result != NULL);
         (*result)->type = J_BOOL;
         (*result)->value.boolean = wordsValue[w];
@@ -177,7 +191,7 @@ err_t jsonParser_parseNull(JsonParser *this, Json **result) {
     }
 
     if (i == wordLen - 1) {
-      *result = malloc(sizeof(Json));
+      *result = json_new();
       assert(result != NULL);
       (*result)->type = J_NULL;
       return OK;
@@ -228,7 +242,7 @@ err_t jsonParser_processPair(JsonParser *this, JsonObject *object) {
 }
 
 err_t jsonParser_parseObject(JsonParser *this, Json **result) {
-  JsonObject *res = json_object_create();
+  JsonObject *res = json_object_new();
   assert(res != NULL);
 
   if (this->data[this->cursor] != '{') {
@@ -258,7 +272,7 @@ err_t jsonParser_parseObject(JsonParser *this, Json **result) {
 
   this->cursor++;
 
-  *result = malloc(sizeof(Json));
+  *result = json_new();
   assert(result != NULL);
   (*result)->type = J_OBJECT;
   (*result)->value.object = res;
@@ -284,7 +298,7 @@ err_t jsonParser_processArrayElement(JsonParser *this, JsonList *list) {
 }
 
 err_t jsonParser_parseArray(JsonParser *this, Json **result) {
-  JsonList *res = json_list_create();
+  JsonList *res = json_list_new();
   assert(res != NULL);
 
   if (this->data[this->cursor] != '[') {
@@ -317,7 +331,7 @@ err_t jsonParser_parseArray(JsonParser *this, Json **result) {
 
   this->cursor++;
 
-  *result = malloc(sizeof(Json));
+  *result = json_new();
   assert(result != NULL);
   (*result)->type = J_LIST;
   (*result)->value.list = res;

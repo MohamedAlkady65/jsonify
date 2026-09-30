@@ -10,11 +10,11 @@
 
 void testJsonParseArray(char *input, Json elements[], int n) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_create(input, strlen(input));
+  JsonParser *parser = jsonParser_new(input, strlen(input));
   err_t err = jsonParser_parseValue(parser, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
-  JsonList *expectedList = json_list_create();
+  JsonList *expectedList = json_list_new();
 
   for (int i = 0; i < n; i++) {
     json_list_put(expectedList, elements + i);

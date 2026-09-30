@@ -9,11 +9,11 @@
 
 void testJsonParseObject(char *input, char *keys[], Json *values, int n) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_create(input, strlen(input));
+  JsonParser *parser = jsonParser_new(input, strlen(input));
   err_t err = jsonParser_parseValue(parser, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
-  JsonObject *object = json_object_create();
+  JsonObject *object = json_object_new();
   Json expected = {J_OBJECT, {.object = object}};
 
   for (int i = 0; i < n; i++) {

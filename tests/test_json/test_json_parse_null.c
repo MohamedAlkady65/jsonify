@@ -8,7 +8,7 @@
 
 void testJsonParseNull(char *input, int expectedConsumed) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_create(input, strlen(input));
+  JsonParser *parser = jsonParser_new(input, strlen(input));
   err_t err = jsonParser_parseValue(parser, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
@@ -22,12 +22,12 @@ void testJsonParseNull(char *input, int expectedConsumed) {
 
 void test_json_parseNull_1() {
   char *input = "null";
-  testJsonParseNull(input,-1);
+  testJsonParseNull(input, -1);
 }
 
 void test_json_parseNull_2() {
   char *input = "   null       ";
-  testJsonParseNull(input,7);
+  testJsonParseNull(input, 7);
 }
 
 void test_json_parseNull_group() {

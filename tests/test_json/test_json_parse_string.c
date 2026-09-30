@@ -7,8 +7,8 @@
 
 void testJsonParseString(char *input, char *expected) {
   Json *result = NULL;
-  JsonParser *parser = jsonParser_create(input, strlen(input));
-  
+  JsonParser *parser = jsonParser_new(input, strlen(input));
+
   err_t err = jsonParser_parseValue(parser, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 

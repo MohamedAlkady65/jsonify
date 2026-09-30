@@ -3,7 +3,9 @@
 
 #include "json.h"
 
-JsonObject *json_object_create();
+JsonObject *json_object_new();
+
+void json_object_destroy(JsonObject *this);
 
 void json_object_put(JsonObject *this, String key, Json *value);
 
