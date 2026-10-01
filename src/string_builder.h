@@ -16,6 +16,6 @@ void stringBuilder_destroy(StringBuilder *this);
 
 void stringBuilder_append(StringBuilder *builder, char *str, int n);
 
-String stringBuilder_build(StringBuilder *builder);
+String *stringBuilder_build(StringBuilder *builder);
 
 #endif // JSONIFY_STRING_BUILDER_H

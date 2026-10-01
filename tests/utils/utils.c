@@ -1,4 +1,3 @@
-#include "string_builder.h"
 #include <assert.h>
 #include <json_list.h>
 #include <json_object.h>
@@ -10,8 +9,8 @@ void testValue(Json *expected, Json *actual) {
   TEST_ASSERT_EQUAL_INT32(expected->type, actual->type);
   switch (expected->type) {
   case J_STRING:
-    TEST_ASSERT_EQUAL_STRING(expected->value.string.data,
-                             actual->value.string.data);
+    TEST_ASSERT_EQUAL_STRING(expected->value.string->data,
+                             actual->value.string->data);
     break;
   case J_NUMBER:
     TEST_ASSERT_EQUAL_DOUBLE(expected->value.number, actual->value.number);

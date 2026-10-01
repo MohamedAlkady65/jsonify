@@ -5,10 +5,9 @@
 #include <json_list.h>
 #include <parser.h>
 #include <stdbool.h>
-#include <string.h>
-#include <unity.h>
 
-void testJsonParseArray(char *input, Json elements[], int n) {
+
+void testJsonParseArray(char *input, Json *elements[], int n) {
   Json *result = NULL;
   err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
@@ -16,7 +15,7 @@ void testJsonParseArray(char *input, Json elements[], int n) {
   JsonList *expectedList = json_list_new();
 
   for (int i = 0; i < n; i++) {
-    json_list_put(expectedList, elements + i);
+    json_list_put(expectedList, elements[i]);
   }
 
   Json *expected = json_new();
@@ -29,18 +28,20 @@ void testJsonParseArray(char *input, Json elements[], int n) {
 
 void test_json_parseArray_1() {
   char *input = "[\"mohamed\"]";
-  Json elements[] = {{.type = J_STRING, .value.string = {"mohamed"}}};
+  Json* elements[] = {json_newStringFromData("mohamed")};
   testJsonParseArray(input, elements, 1);
 }
 
 void test_json_parseArray_2() {
   char *input = "[\"mohamed\",\"ali\",\"1234\"  ,  \"\"   ]";
-  Json elements[] = {
-      {.type = J_STRING, .value.string = {"mohamed"}},
-      {.type = J_STRING, .value.string = {"ali"}},
-      {.type = J_STRING, .value.string = {"1234"}},
-      {.type = J_STRING, .value.string = {""}},
+
+  Json *elements[] = {
+      json_newStringFromData("mohamed"),
+      json_newStringFromData("ali"),
+      json_newStringFromData("1234"),
+      json_newStringFromData(""),
   };
+
   testJsonParseArray(input, elements, 4);
 }
 
@@ -49,18 +50,18 @@ void test_json_parseArray_3() {
                 "  \n   \n\n  \n\n    \"ali\"  \n   \n\n  \n\n ,  \n   \n\n  "
                 "\n\n \"1234\"   \n   \n\n  \n\n  ,    \n   \n\n  \n\n\"\"   "
                 "\n   \n\n  \n\n  ]      \n   \n\n  \n\n   ";
-  Json elements[] = {
-      {.type = J_STRING, .value.string = {"mohamed"}},
-      {.type = J_STRING, .value.string = {"ali"}},
-      {.type = J_STRING, .value.string = {"1234"}},
-      {.type = J_STRING, .value.string = {""}},
+  Json *elements[] = {
+      json_newStringFromData("mohamed"),
+      json_newStringFromData("ali"),
+      json_newStringFromData("1234"),
+      json_newStringFromData(""),
   };
   testJsonParseArray(input, elements, 4);
 }
 
 void test_json_parseArray_4() {
   char *input = "[]";
-  Json *elements = {};
+  Json **elements = {};
   testJsonParseArray(input, elements, 0);
 }
 

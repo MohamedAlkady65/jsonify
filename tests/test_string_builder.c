@@ -27,10 +27,10 @@ void testStringBuilderHelper(char *str) {
     i += step;
   }
 
-  String result = stringBuilder_build(builder);
+  String *result = stringBuilder_build(builder);
 
-  TEST_ASSERT_EQUAL_STRING(str, result.data);
-  TEST_ASSERT_EQUAL_INT32(n, result.len);
+  TEST_ASSERT_EQUAL_STRING(str, result->data);
+  TEST_ASSERT_EQUAL_INT32(n, result->len);
 
   stringBuilder_destroy(builder);
 }

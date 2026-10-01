@@ -7,7 +7,7 @@ JsonObject *json_object_new();
 
 void json_object_destroy(JsonObject *this);
 
-void json_object_put(JsonObject *this, String key, Json *value);
+void json_object_put(JsonObject *this, String* key, Json *value);
 
 Json *json_object_get(JsonObject *this, String key);
 

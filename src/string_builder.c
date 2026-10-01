@@ -1,4 +1,5 @@
 #include "string_builder.h"
+#include "custom_string.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,7 +39,7 @@ void stringBuilder_append(StringBuilder *builder, char *str, int n) {
   builder->len += n;
 }
 
-String stringBuilder_build(StringBuilder *builder) {
+String* stringBuilder_build(StringBuilder *builder) {
 
   char terminal = 0;
 
@@ -50,5 +51,5 @@ String stringBuilder_build(StringBuilder *builder) {
 
   builder->buf = NULL;
 
-  return (String){result, builder->len - 1};
+  return string_newFrom(result);
 }

@@ -33,7 +33,7 @@ err_t jsonParser_skipWs(JsonParser *this) {
   return OK;
 }
 
-err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
+err_t jsonParser_parseStringHelper(JsonParser *this, String **result) {
 
   if (this->data[this->cursor] != '"') {
     return ERR;
@@ -49,8 +49,7 @@ err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
 
   for (; this->cursor < this->n; (this->cursor)++) {
     if (!escaping && this->data[this->cursor] == '"') {
-      String builded = stringBuilder_build(builder);
-      *result = builded;
+      *result = stringBuilder_build(builder);
       returnCode = OK;
       break;
     }
@@ -83,7 +82,7 @@ err_t jsonParser_parseStringHelper(JsonParser *this, String *result) {
 }
 
 err_t jsonParser_parseString(JsonParser *this, Json **result) {
-  String str;
+  String *str;
   err_t err = jsonParser_parseStringHelper(this, &str);
 
   if (err != OK) {
@@ -202,7 +201,7 @@ err_t jsonParser_parseNull(JsonParser *this, Json **result) {
 }
 
 err_t jsonParser_processPair(JsonParser *this, JsonObject *object) {
-  String key;
+  String *key;
   err_t err;
 
   err = jsonParser_parseStringHelper(this, &key);

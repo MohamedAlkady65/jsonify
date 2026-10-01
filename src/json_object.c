@@ -1,13 +1,13 @@
 #include "json_object.h"
+#include "custom_string.h"
 #include "json.h"
-#include "string_builder.h"
 #include <assert.h>
 #include <stb_ds.h>
 #include <stdlib.h>
 
 typedef struct JsonObjectPair {
   char *key;
-  int keyLen;
+  struct String *keyObject;
   struct Json *value;
 } JsonObjectPair;
 
@@ -24,10 +24,10 @@ JsonObject *json_object_new() {
   return object;
 }
 
-void json_object_put(JsonObject *this, String key, Json *value) {
+void json_object_put(JsonObject *this, String *key, Json *value) {
   shputs(
       this->elements,
-      ((JsonObjectPair){.key = key.data, .keyLen = key.len, .value = value}));
+      ((JsonObjectPair){.key = key->data, .keyObject = key, .value = value}));
 
   this->length++;
 }
@@ -43,7 +43,7 @@ String *json_object_keys(JsonObject *this) {
   String *keys = malloc(sizeof(String) * n);
 
   for (int i = 0; i < n; i++) {
-    keys[i] = (String){this->elements[i].key, this->elements->keyLen};
+    keys[i] = (String){this->elements[i].key, this->elements->keyObject->len};
   }
 
   return keys;
@@ -58,13 +58,13 @@ void json_object_destroy(JsonObject *this) {
 
   int n = this->length;
   for (int i = 0; i < n; i++) {
-    free(this->elements[i].key);
+    string_destroy(this->elements[i].keyObject);
     json_destroy(this->elements[i].value);
   }
 
   if (this->elements != NULL) {
     shfree(this->elements);
   }
-  
+
   free(this);
 }

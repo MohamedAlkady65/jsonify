@@ -18,7 +18,7 @@ typedef struct JsonList JsonList;
 typedef struct JsonObject JsonObject;
 
 typedef union JsonValue {
-  String string;
+  String *string;
   double number;
   bool boolean;
   JsonList *list;
@@ -35,5 +35,7 @@ Json *json_new();
 void json_destroy(Json *this);
 
 err_t json_parse(char *data, Json **out);
+
+Json *json_newStringFromData(char *data);
 
 #endif // JSONIFY_JSON_H

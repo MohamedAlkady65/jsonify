@@ -6,4 +6,10 @@ typedef struct String {
   int len;
 } String;
 
+String *string_new();
+
+String *string_newFrom(char *data);
+
+void string_destroy(String *this);
+
 #endif // JSONIFY_STRING_H

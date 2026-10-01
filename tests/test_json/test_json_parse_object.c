@@ -1,4 +1,5 @@
 #include "../utils/utils.h"
+#include "json.h"
 #include <assert.h>
 #include <json_object.h>
 #include <parser.h>
@@ -6,7 +7,7 @@
 #include <string.h>
 #include <unity.h>
 
-void testJsonParseObject(char *input, char *keys[], Json *values, int n) {
+void testJsonParseObject(char *input, char *keys[], Json **values, int n) {
   Json *result = NULL;
   err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
@@ -17,7 +18,7 @@ void testJsonParseObject(char *input, char *keys[], Json *values, int n) {
   *expected = (Json){J_OBJECT, {.object = object}};
 
   for (int i = 0; i < n; i++) {
-    json_object_put(object, (String){keys[i], strlen(keys[i])}, values + i);
+    json_object_put(object, string_newFrom(keys[i]), values[i]);
   }
 
   testValue(expected, result);
@@ -28,15 +29,16 @@ void testJsonParseObject(char *input, char *keys[], Json *values, int n) {
 void test_json_parseObject_1() {
   char *input = "{\"name\":\"Mohamed\"}";
   char *keys[] = {"name"};
-  Json values[] = {{.type = J_STRING, .value.string = "Mohamed"}};
+  Json *values[] = {json_newStringFromData("Mohamed")};
   testJsonParseObject(input, keys, values, 1);
 }
 
 void test_json_parseObject_2() {
   char *input = "{\"name\":\"Mohamed\",\"age\":\"20\"}";
   char *keys[] = {"name", "age"};
-  Json values[] = {{.type = J_STRING, .value.string = {"Mohamed"}},
-                   {.type = J_STRING, .value.string = {"20"}}};
+  Json *values[] = {json_newStringFromData("Mohamed"),
+                    json_newStringFromData("20")};
+
   testJsonParseObject(input, keys, values, 2);
 }
 
@@ -46,9 +48,10 @@ void test_json_parseObject_3() {
       "\"Khaled\"  \n\n   , \"\":\"empty\"   ,       \"age\"    \n\n  \n    :  "
       "   \n\n  \n   \"\"           }                         ";
   char *keys[] = {"name", "", "age"};
-  Json values[] = {{.type = J_STRING, .value.string = {"Khaled"}},
-                   {.type = J_STRING, .value.string = {"empty"}},
-                   {.type = J_STRING, .value.string = {""}}};
+  Json *values[] = {json_newStringFromData("Khaled"),
+                    json_newStringFromData("empty"),
+                    json_newStringFromData("")};
+
   testJsonParseObject(input, keys, values, 3);
 }
 
@@ -57,16 +60,17 @@ void test_json_parseObject_4() {
                 "  \n  ,\n  \n  \"age\"\n  \n      :\n      \n       \"324\" "
                 "\n    \n  ,\n  \n  \n  \"country\"    : \"EGY       PT\"\n}";
   char *keys[] = {"name", "age", "country"};
-  Json values[] = {{.type = J_STRING, .value.string = {"Ali124"}},
-                   {.type = J_STRING, .value.string = {"324"}},
-                   {.type = J_STRING, .value.string = {"EGY       PT"}}};
+  Json *values[] = {json_newStringFromData("Ali124"),
+                    json_newStringFromData("324"),
+                    json_newStringFromData("EGY       PT")};
+
   testJsonParseObject(input, keys, values, 3);
 }
 
 void test_json_parseObject_5() {
   char *input = "{}";
   char **keys = {};
-  Json *values = {};
+  Json **values = {};
   testJsonParseObject(input, keys, values, 0);
 }
 

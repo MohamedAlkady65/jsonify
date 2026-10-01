@@ -1,4 +1,5 @@
 #include "../utils/utils.h"
+#include "json.h"
 #include <assert.h>
 #include <parser.h>
 #include <stdbool.h>
@@ -10,9 +11,10 @@ void testJsonParseString(char *input, char *expected) {
   err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
-  Json exp = {J_STRING, {.string = {expected, strlen(expected)}}};
-  testValue(&exp, result);
+  Json* exp = json_newStringFromData(expected);
+  testValue(exp, result);
   json_destroy(result);
+  json_destroy(exp);
 }
 
 void test_json_parseString_1() {

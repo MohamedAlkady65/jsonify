@@ -1,5 +1,6 @@
 
 #include "json.h"
+#include "custom_string.h"
 #include "error.h"
 #include "json_list.h"
 #include "json_object.h"
@@ -24,9 +25,7 @@ void json_destroy(Json *this) {
   } else if (this->type == J_LIST) {
     json_list_destroy(this->value.list);
   } else if (this->type == J_STRING) {
-    if (this->value.string.data != NULL) {
-      free(this->value.string.data);
-    }
+    string_destroy(this->value.string);
   }
 
   free(this);
@@ -37,4 +36,11 @@ err_t json_parse(char *data, Json **out) {
   err_t err = jsonParser_parseValue(parser, out);
   jsonParser_destroy(parser);
   return err;
+}
+
+Json *json_newStringFromData(char *data) {
+  String *str = string_newFrom(data);
+  Json *result = json_new();
+  *result = (Json){J_STRING, {.string = str}};
+  return result;
 }
