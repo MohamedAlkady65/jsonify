@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unity.h>
+#include <json_string.h>
 
 void testJsonParseObject(char *input, char *keys[], Json **values, int n) {
   Json *result = NULL;
@@ -29,15 +30,15 @@ void testJsonParseObject(char *input, char *keys[], Json **values, int n) {
 void test_json_parseObject_1() {
   char *input = "{\"name\":\"Mohamed\"}";
   char *keys[] = {"name"};
-  Json *values[] = {json_newStringFromData("Mohamed")};
+  Json *values[] = {json_string_newFromData("Mohamed")};
   testJsonParseObject(input, keys, values, 1);
 }
 
 void test_json_parseObject_2() {
   char *input = "{\"name\":\"Mohamed\",\"age\":\"20\"}";
   char *keys[] = {"name", "age"};
-  Json *values[] = {json_newStringFromData("Mohamed"),
-                    json_newStringFromData("20")};
+  Json *values[] = {json_string_newFromData("Mohamed"),
+                    json_string_newFromData("20")};
 
   testJsonParseObject(input, keys, values, 2);
 }
@@ -48,9 +49,9 @@ void test_json_parseObject_3() {
       "\"Khaled\"  \n\n   , \"\":\"empty\"   ,       \"age\"    \n\n  \n    :  "
       "   \n\n  \n   \"\"           }                         ";
   char *keys[] = {"name", "", "age"};
-  Json *values[] = {json_newStringFromData("Khaled"),
-                    json_newStringFromData("empty"),
-                    json_newStringFromData("")};
+  Json *values[] = {json_string_newFromData("Khaled"),
+                    json_string_newFromData("empty"),
+                    json_string_newFromData("")};
 
   testJsonParseObject(input, keys, values, 3);
 }
@@ -60,9 +61,9 @@ void test_json_parseObject_4() {
                 "  \n  ,\n  \n  \"age\"\n  \n      :\n      \n       \"324\" "
                 "\n    \n  ,\n  \n  \n  \"country\"    : \"EGY       PT\"\n}";
   char *keys[] = {"name", "age", "country"};
-  Json *values[] = {json_newStringFromData("Ali124"),
-                    json_newStringFromData("324"),
-                    json_newStringFromData("EGY       PT")};
+  Json *values[] = {json_string_newFromData("Ali124"),
+                    json_string_newFromData("324"),
+                    json_string_newFromData("EGY       PT")};
 
   testJsonParseObject(input, keys, values, 3);
 }

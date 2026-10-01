@@ -37,10 +37,3 @@ err_t json_parse(char *data, Json **out) {
   jsonParser_destroy(parser);
   return err;
 }
-
-Json *json_newStringFromData(char *data) {
-  String *str = string_newFrom(data);
-  Json *result = json_new();
-  *result = (Json){J_STRING, {.string = str}};
-  return result;
-}

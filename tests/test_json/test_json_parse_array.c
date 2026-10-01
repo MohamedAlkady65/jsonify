@@ -5,7 +5,7 @@
 #include <json_list.h>
 #include <parser.h>
 #include <stdbool.h>
-
+#include <json_string.h>
 
 void testJsonParseArray(char *input, Json *elements[], int n) {
   Json *result = NULL;
@@ -28,7 +28,7 @@ void testJsonParseArray(char *input, Json *elements[], int n) {
 
 void test_json_parseArray_1() {
   char *input = "[\"mohamed\"]";
-  Json* elements[] = {json_newStringFromData("mohamed")};
+  Json *elements[] = {json_string_newFromData("mohamed")};
   testJsonParseArray(input, elements, 1);
 }
 
@@ -36,10 +36,10 @@ void test_json_parseArray_2() {
   char *input = "[\"mohamed\",\"ali\",\"1234\"  ,  \"\"   ]";
 
   Json *elements[] = {
-      json_newStringFromData("mohamed"),
-      json_newStringFromData("ali"),
-      json_newStringFromData("1234"),
-      json_newStringFromData(""),
+      json_string_newFromData("mohamed"),
+      json_string_newFromData("ali"),
+      json_string_newFromData("1234"),
+      json_string_newFromData(""),
   };
 
   testJsonParseArray(input, elements, 4);
@@ -51,10 +51,10 @@ void test_json_parseArray_3() {
                 "\n\n \"1234\"   \n   \n\n  \n\n  ,    \n   \n\n  \n\n\"\"   "
                 "\n   \n\n  \n\n  ]      \n   \n\n  \n\n   ";
   Json *elements[] = {
-      json_newStringFromData("mohamed"),
-      json_newStringFromData("ali"),
-      json_newStringFromData("1234"),
-      json_newStringFromData(""),
+      json_string_newFromData("mohamed"),
+      json_string_newFromData("ali"),
+      json_string_newFromData("1234"),
+      json_string_newFromData(""),
   };
   testJsonParseArray(input, elements, 4);
 }

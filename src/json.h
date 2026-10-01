@@ -36,6 +36,4 @@ void json_destroy(Json *this);
 
 err_t json_parse(char *data, Json **out);
 
-Json *json_newStringFromData(char *data);
-
 #endif // JSONIFY_JSON_H

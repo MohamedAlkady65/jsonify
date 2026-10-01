@@ -5,13 +5,14 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unity.h>
+#include <json_string.h>
 
 void testJsonParseString(char *input, char *expected) {
   Json *result = NULL;
   err_t err = json_parse(input, &result);
   TEST_ASSERT_EQUAL_INT(OK, err);
 
-  Json* exp = json_newStringFromData(expected);
+  Json *exp = json_string_newFromData(expected);
   testValue(exp, result);
   json_destroy(result);
   json_destroy(exp);
