@@ -25,10 +25,17 @@ JsonObject *json_object_new() {
 }
 
 void json_object_put(JsonObject *this, String *key, Json *value) {
-  shputs(
-      this->elements,
-      ((JsonObjectPair){.key = key->data, .keyObject = key, .value = value}));
+  JsonObjectPair pair = {.key = key->data, .keyObject = key, .value = value};
 
+  int existsIndex = shgeti(this->elements, key->data);
+  if (existsIndex != -1) {
+    string_destroy(this->elements[existsIndex].keyObject);
+    json_destroy(this->elements[existsIndex].value);
+    this->elements[existsIndex] = pair;
+    return;
+  }
+
+  shputs(this->elements, pair);
   this->length++;
 }
 
@@ -43,7 +50,7 @@ String *json_object_keys(JsonObject *this) {
   String *keys = malloc(sizeof(String) * n);
 
   for (int i = 0; i < n; i++) {
-    keys[i] = (String){this->elements[i].key, this->elements->keyObject->len};
+    keys[i] = (String){this->elements[i].key, this->elements[i].keyObject->len};
   }
 
   return keys;

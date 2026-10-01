@@ -215,6 +215,7 @@ err_t jsonParser_parseNull(JsonParser *this, Json **result) {
 
 err_t jsonParser_processPair(JsonParser *this, JsonObject *object) {
   String *key = NULL;
+  Json *value = NULL;
   err_t err;
 
   err = jsonParser_parseStringHelper(this, &key);
@@ -230,11 +231,11 @@ err_t jsonParser_processPair(JsonParser *this, JsonObject *object) {
   }
 
   if (this->data[this->cursor] != ':') {
-    return ERR;
+    err = ERR;
+    goto error;
   };
   this->cursor++;
 
-  Json *value = NULL;
   err = jsonParser_parseValue(this, &value);
 
   if (err != OK) {
@@ -306,7 +307,7 @@ error:
 }
 
 err_t jsonParser_processArrayElement(JsonParser *this, JsonList *list) {
-  Json *value;
+  Json *value = NULL;
   err_t err = jsonParser_parseValue(this, &value);
   if (err != OK) {
     goto error;

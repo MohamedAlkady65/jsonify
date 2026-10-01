@@ -3,6 +3,7 @@
         "JSONIFY",
         "shfree",
         "shget",
+        "shgeti",
         "shput",
         "shputs"
     ],

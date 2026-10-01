@@ -1,3 +1,4 @@
+#include "custom_string.h"
 #include <stdbool.h>
 #include <string.h>
 #include <string_builder.h>
@@ -33,6 +34,7 @@ void testStringBuilderHelper(char *str) {
   TEST_ASSERT_EQUAL_INT32(n, result->len);
 
   stringBuilder_destroy(builder);
+  string_destroy(result);
 }
 
 void test_stringBuilder_init() {

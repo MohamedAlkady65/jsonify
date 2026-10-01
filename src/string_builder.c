@@ -39,7 +39,7 @@ void stringBuilder_append(StringBuilder *builder, char *str, int n) {
   builder->len += n;
 }
 
-String* stringBuilder_build(StringBuilder *builder) {
+String *stringBuilder_build(StringBuilder *builder) {
 
   char terminal = 0;
 
@@ -50,6 +50,7 @@ String* stringBuilder_build(StringBuilder *builder) {
   assert(result != NULL);
 
   builder->buf = NULL;
-
-  return string_newFrom(result);
+  String *stringResult = string_newFrom(result);
+  free(result);
+  return stringResult;
 }
